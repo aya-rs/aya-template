@@ -1,9 +1,2 @@
 [build]
 target-dir = "../target"
-target = "bpfel-unknown-none"
-
-[target.bpfel-unknown-none]
-rustflags = "-Z build-std=core --target bpfel-unknown-none"
-
-[target.bpfeb-unknown-none]
-rustflags = "-Z build-std=core --target bpfel-unknown-none"

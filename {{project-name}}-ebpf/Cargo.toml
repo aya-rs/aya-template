@@ -1,14 +1,14 @@
 [package]
-name = "{{project-name}}-ebpf"
+name = "{{ project-name }}-ebpf"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 aya-bpf = { git = "http://github.com/alessandrod/aya", branch = "main" }
-{{project-name}}-common = { path = "../{{project-name}}-common" }
+{{ project-name }}-common = { path = "../{{ project-name }}-common" }
 
 [[bin]]
-name = "{{project-name}}"
+name = "{{ project-name }}"
 path = "src/main.rs"
 
 [profile.dev]
