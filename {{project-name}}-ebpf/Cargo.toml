@@ -6,6 +6,7 @@ edition = "2018"
 [dependencies]
 aya-bpf = { git = "http://github.com/alessandrod/aya", branch = "main" }
 {{ project-name }}-common = { path = "../{{ project-name }}-common" }
+memoffset = "0.6"
 
 [[bin]]
 name = "{{ project-name }}"
