@@ -1,0 +1,41 @@
+[template]
+cargo_generate_version = ">=0.9.0"
+ignore = [".github", "test.sh"]
+
+[placeholders.program_type]
+type = "string"
+prompt = "Which type of eBPF program?"
+choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint"]
+default = "xdp"
+
+[conditional.'program_type == "kprobe" || program_type == "kretprobe"'.placeholders.kprobe]
+type = "string"
+prompt = "Where to attach the (k|kret)probe? (e.g try_to_wake_up)"
+
+[conditional.'program_type == "uprobe" || program_type == "uretprobe"'.placeholders.uprobe_target]
+type = "string"
+prompt = "Target to attach the (u|uret)probe? (e.g libc)"
+
+[conditional.'program_type == "uprobe" || program_type == "uretprobe"'.placeholders.uprobe_fn_name]
+type = "string"
+prompt = "Function name to attach the (u|uret)probe? (e.g getaddrinfo)"
+
+[conditional.'program_type == "cgroup_skb" || program_type == "classifier"'.placeholders.direction]
+type = "string"
+prompt = "Attach direction?"
+choices = [ "Ingress", "Egress" ]
+
+[conditional.'program_type == "sk_msg"'.placeholders.sock_map]
+type = "string"
+prompt = "Map Name (UPPER_CASE)?"
+regex = "[A-Z_]+"
+
+[conditional.'program_type == "tracepoint"'.placeholders.tracepoint_category]
+type = "string"
+prompt = "Which tracepoint category? (e.g sched, net etc...)"
+regex = "[a-z]+"
+
+[conditional.'program_type == "tracepoint"'.placeholders.tracepoint_name]
+type = "string"
+prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
+regex = "[a-z]+"
