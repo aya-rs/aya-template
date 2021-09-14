@@ -24,5 +24,5 @@ cargo build
 ## Run
 
 ```bash
-cargo run --package {{project-name}} -bin {{project-name}}
+cargo run --package {{project-name}} --bin {{project-name}}
 ```
