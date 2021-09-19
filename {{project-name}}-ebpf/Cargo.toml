@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-aya-bpf = { git = "http://github.com/alessandrod/aya", branch = "main" }
+aya-bpf = { git = "http://github.com/aya-rs/aya", branch = "main" }
 {{ project-name }}-common = { path = "../{{ project-name }}-common" }
 
 [[bin]]

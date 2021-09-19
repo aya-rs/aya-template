@@ -5,7 +5,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-aya = { git = "https://github.com/alessandrod/aya", branch="main" }
+aya = { git = "https://github.com/aya-rs/aya", branch="main" }
 {{project-name}}-common = { path = "../{{project-name}}-common", features=["userspace"] }
 anyhow = "1.0.42"
 ctrlc = "3.2"
