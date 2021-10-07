@@ -48,7 +48,7 @@ jobs:
         run: cargo +nightly install bpf-linker
 
       - name: Install Cargo Generate
-        run: cargo install --git https://github.com/cargo-generate/cargo-generate
+        run: cargo install --git https://github.com/cargo-generate/cargo-generate cargo-generate
 
       - name: Run tests
         run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
