@@ -57,7 +57,7 @@ fn try_main() -> Result<(), anyhow::Error> {
     {%- when "kprobe", "kretprobe" -%}
     let program: &mut KProbe = bpf.program_mut("{{crate_name}}")?.try_into()?;
     program.load()?;
-    program.attach("{{probe}}", 0)?;
+    program.attach("{{kprobe}}", 0)?;
     {%- when "uprobe", "uretprobe" -%}
     let program: &mut UProbe = bpf.program_mut("{{crate_name}}")?.try_into()?;
     program.load()?;
