@@ -24,5 +24,5 @@ cargo build
 ## Run
 
 ```bash
-cargo run --package {{project-name}} --bin {{project-name}}
+sudo target/debug/{{project-name}} --path target/bpfel-unknown-none/debug/{{project-name}}
 ```
