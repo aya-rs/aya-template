@@ -181,5 +181,5 @@ unsafe fn try_{{crate_name}}(_ctx: TracePointContext) -> Result<u32, u32> {
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
-    unreachable!()
+    unsafe { core::hint::unreachable_unchecked() }
 }
