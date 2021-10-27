@@ -18,6 +18,8 @@ use aya::programs::{tc, SchedClassifier, TcAttachType};
 use aya::programs::{CgroupSkb, CgroupSkbAttachType};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
+{%- when "lsm" -%}
+use aya::programs::Lsm;
 {%- endcase %}
 use std::{
     convert::{TryFrom,TryInto},
@@ -91,8 +93,12 @@ fn try_main() -> Result<(), anyhow::Error> {
     let program: &mut TracePoint = bpf.program_mut("{{crate_name}}")?.try_into()?;
     program.load()?;
     program.attach("{{tracepoint_category}}", "{{tracepoint_name}}")?;
+    {%- when "lsm" -%}
+    let program: &mut Lsm = bpf.program_mut("{{lsm_hook}}")?.try_into()?;
+    program.load("{{lsm_hook}}")?;
+    program.attach()?;
     {%- endcase %}
-    
+
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
 

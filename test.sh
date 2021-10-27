@@ -30,6 +30,9 @@ case "$PROG_TYPE" in
     "sk_msg")
         ADDITIONAL_ARGS="-d sock_map=TEST"
         ;;
+    "lsm")
+        ADDITIONAL_ARGS="-d lsm_hook=file_open"
+        ;;
     *)
         ADDITIONAL_ARGS=''
 esac

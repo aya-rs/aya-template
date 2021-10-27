@@ -5,7 +5,7 @@ ignore = [".github", "test.sh"]
 [placeholders.program_type]
 type = "string"
 prompt = "Which type of eBPF program?"
-choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint"]
+choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint", "lsm"]
 default = "xdp"
 
 [conditional.'program_type == "kprobe" || program_type == "kretprobe"'.placeholders.kprobe]
@@ -38,4 +38,9 @@ regex = "[a-z]+"
 [conditional.'program_type == "tracepoint"'.placeholders.tracepoint_name]
 type = "string"
 prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
+regex = "[a-z]+"
+
+[conditional.'program_type == "lsm"'.placeholders.lsm_hook]
+type = "string"
+prompt = "Which lsm hook? (e.g file_open, task_alloc) You can find a list of hooks in include/linux/lsm_hooks.h in the kernel source tree."
 regex = "[a-z]+"

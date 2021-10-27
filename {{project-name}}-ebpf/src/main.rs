@@ -177,6 +177,23 @@ pub fn {{crate_name}}(ctx: TracePointContext) -> u32 {
 unsafe fn try_{{crate_name}}(_ctx: TracePointContext) -> Result<u32, u32> {
     Ok(0)
 }
+{%- when "lsm" %}
+use aya_bpf::{
+    macros::lsm,
+    programs::LsmContext,
+};
+
+#[lsm(name="{{lsm_hook}}")]
+pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
+    match unsafe { try_{{lsm_hook}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{lsm_hook}}(_ctx: LsmContext) -> Result<i32, i32> {
+    Ok(0)
+}
 {%- endcase %}
 
 #[panic_handler]
