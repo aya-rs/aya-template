@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-   
+
   pull_request:
     branches:
       - main
@@ -29,6 +29,7 @@ jobs:
           - classifier
           - cgroup_skb
           - tracepoint
+          - lsm
 
     steps:
       - uses: actions/checkout@v2
