@@ -1,3 +1,3 @@
 {
-  "rust-analyzer.linkedProjects": ["Cargo.toml", "{{crate_name}}-ebpf/Cargo.toml"]
+  "rust-analyzer.linkedProjects": ["Cargo.toml", "{{project-name}}-ebpf/Cargo.toml"]
 }
