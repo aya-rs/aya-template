@@ -5,7 +5,7 @@ ignore = [".github", "test.sh"]
 [placeholders.program_type]
 type = "string"
 prompt = "Which type of eBPF program?"
-choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint", "lsm"]
+choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint", "lsm", "tp_btf"]
 default = "xdp"
 
 [conditional.'program_type == "kprobe" || program_type == "kretprobe"'.placeholders.kprobe]
@@ -35,7 +35,7 @@ type = "string"
 prompt = "Which tracepoint category? (e.g sched, net etc...)"
 regex = "[a-z]+"
 
-[conditional.'program_type == "tracepoint"'.placeholders.tracepoint_name]
+[conditional.'program_type == "tracepoint" || program_type == "tp_btf"'.placeholders.tracepoint_name]
 type = "string"
 prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
 regex = "[a-z]+"

@@ -30,6 +30,7 @@ jobs:
           - cgroup_skb
           - tracepoint
           - lsm
+          - tp_btf
 
     steps:
       - uses: actions/checkout@v2

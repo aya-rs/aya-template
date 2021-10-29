@@ -194,6 +194,23 @@ pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
 unsafe fn try_{{lsm_hook}}(_ctx: LsmContext) -> Result<i32, i32> {
     Ok(0)
 }
+{%- when "tp_btf" %}
+use aya_bpf::{
+    macros::btf_tracepoint,
+    programs::BtfTracePointContext,
+};
+
+#[btf_tracepoint(name="{{tracepoint_name}}")]
+pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
+    match unsafe { try_{{tracepoint_name}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{tracepoint_name}}(_ctx: BtfTracePointContext) -> Result<i32, i32> {
+    Ok(0)
+}
 {%- endcase %}
 
 #[panic_handler]
