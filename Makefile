@@ -9,9 +9,9 @@ RELEASE = target/release/{{project-name}}
 DEBUG_BPF   = target/bpfel-unknown-none/debug/{{project-name}}
 RELEASE_BPF = target/bpfel-unknown-none/release/{{project-name}}
 
-USER_SRCS   =  $(wildcard {{project-name}}-common/**/*)
-COMMON_SRCS =  $(wildcard {{project-name}}/**/*)
-BPF_SRCS    =  $(wildcard {{project-name}}-ebpf/**/*)
+USER_SRCS   =  $(wildcard {{project-name}}-common/*) $(wildcard {{project-name}}-common/**/*)
+COMMON_SRCS =  $(wildcard {{project-name}}/*) $(wildcard {{project-name}}/**/*)
+BPF_SRCS    =  $(wildcard {{project-name}}-ebpf/*) $(wildcard {{project-name}}-ebpf/**/*)
 
 .PHONY: build
 build: $(DEBUG)
