@@ -33,6 +33,9 @@ case "$PROG_TYPE" in
     "lsm")
         ADDITIONAL_ARGS="-d lsm_hook=file_open"
         ;;
+    "tp_btf")
+	    ADDITIONAL_ARGS="-d tracepoint_name=net_dev_queue"
+        ;;
     *)
         ADDITIONAL_ARGS=''
 esac

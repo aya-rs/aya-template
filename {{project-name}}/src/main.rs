@@ -20,6 +20,8 @@ use aya::programs::{CgroupSkb, CgroupSkbAttachType};
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
 use aya::{programs::Lsm, Btf};
+{%- when "tp_btf" -%}
+use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
 use std::{
     convert::{TryFrom,TryInto},
@@ -97,6 +99,11 @@ fn try_main() -> Result<(), anyhow::Error> {
     let btf = Btf::from_sys_fs()?;
     let program: &mut Lsm = bpf.program_mut("{{lsm_hook}}")?.try_into()?;
     program.load("{{lsm_hook}}", &btf)?;
+    program.attach()?;
+    {%- when "tp_btf" -%}
+    let btf = Btf::from_sys_fs()?;
+    let program: &mut BtfTracePoint = bpf.program_mut("{{tracepoint_name}}")?.try_into()?;
+    program.load("{{tracepoint_name}}", &btf)?;
     program.attach()?;
     {%- endcase %}
 
