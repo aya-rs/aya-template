@@ -24,5 +24,5 @@ cargo build
 ## Run
 
 ```bash
-sudo target/debug/{{project-name}} --path target/bpfel-unknown-none/debug/{{project-name}}
+cargo xtask run -p
 ```
