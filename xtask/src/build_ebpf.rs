@@ -56,7 +56,7 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
         .current_dir(&dir)
         .args(&args)
         .status()
-        .expect("failed to build bpf examples");
+        .expect("failed to build bpf program");
     assert!(status.success());
     Ok(())
 }
