@@ -33,12 +33,12 @@ impl std::fmt::Display for Architecture {
 #[derive(StructOpt)]
 pub struct Options {
     #[structopt(default_value = "bpfel-unknown-none", long)]
-    target: Architecture,
+    pub target: Architecture,
     #[structopt(long)]
-    release: bool,
+    pub release: bool,
 }
 
-pub fn build(opts: Options) -> Result<(), anyhow::Error> {
+pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     let dir = PathBuf::from("{{project-name}}-ebpf");
     let target = format!("--target={}", opts.target);
     let mut args = vec![
