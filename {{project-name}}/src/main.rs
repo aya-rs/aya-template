@@ -1,4 +1,4 @@
-use aya::Bpf;
+use aya::{Bpf, include_bytes_aligned};
 {% case program_type -%}
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
@@ -40,8 +40,6 @@ fn main() {
 
 #[derive(Debug, StructOpt)]
 struct Opt {
-    #[structopt(short, long)]
-    path: String,
     {% if program_type == "xdp" or program_type == "classifier" -%}
     #[structopt(short, long, default_value = "eth0")]
     iface: String,
@@ -56,7 +54,18 @@ struct Opt {
 
 fn try_main() -> Result<(), anyhow::Error> {
     let opt = Opt::from_args();
-    let mut bpf = Bpf::load_file(&opt.path)?;
+    // This will include youe eBPF object file as raw bytes at compile-time and load it at
+    // runtime. This approach is recommended for most real-world use cases. If you would
+    // like to specify the eBPF program at runtime rather than at compile-time, you can
+    // reach for `Bpf::load_file` instead.
+    #[cfg(debug_assertions)]
+    let mut bpf = Bpf::load(include_bytes_aligned!(
+        "../../target/bpfel-unknown-none/debug/{{project-name}}"
+    ))?;
+    #[cfg(not(debug_assertions))]
+    let mut bpf = Bpf::load(include_bytes_aligned!(
+        "../../target/bpfel-unknown-none/release/{{project-name}}"
+    ))?;
     {% case program_type -%}
     {%- when "kprobe", "kretprobe" -%}
     let program: &mut KProbe = bpf.program_mut("{{crate_name}}")?.try_into()?;
