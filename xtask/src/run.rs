@@ -16,9 +16,6 @@ pub struct Options {
     /// The command used to wrap your application
     #[structopt(short, long, default_value = "sudo -E")]
     pub runner: String,
-    /// A convenience flag that will supply `--path /path/to/bpf/object` to your application
-    #[structopt(short = "p", long)]
-    pub supply_path: bool,
     /// Arguments to pass to your application
     #[structopt(name = "args", last = true)]
     pub run_args: Vec<String>,
@@ -51,14 +48,9 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     // profile we are building (release or debug)
     let profile = if opts.release { "release" } else { "debug" };
     let bin_path = format!("target/{}/{{project-name}}", profile);
-    let bpf_path = format!("target/{}/{}/{{project-name}}", opts.bpf_target, profile);
 
     // arguments to pass to the application
     let mut run_args: Vec<_> = opts.run_args.iter().map(String::as_str).collect();
-    if opts.supply_path {
-        run_args.push("--path");
-        run_args.push(bpf_path.as_str());
-    };
 
     // configure args
     let mut args: Vec<_> = opts.runner.trim().split_terminator(" ").collect();

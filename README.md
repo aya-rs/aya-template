@@ -24,5 +24,5 @@ cargo build
 ## Run
 
 ```bash
-cargo xtask run -p
+cargo xtask run
 ```
