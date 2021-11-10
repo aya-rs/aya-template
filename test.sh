@@ -42,7 +42,7 @@ esac
 
 cargo generate -v --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
-cargo build
 cargo xtask build-ebpf
+cargo build
 popd
 exit 0
