@@ -10,6 +10,6 @@ pub struct SockKey {
     pub local_port: u32,
 }
 
-#[cfg(feature = "userspace")]
+#[cfg(feature = "user")]
 unsafe impl aya::Pod for SockKey {}
 {%- endif -%}

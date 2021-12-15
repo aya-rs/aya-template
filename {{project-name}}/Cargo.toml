@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 aya = { git = "https://github.com/aya-rs/aya", branch="main" }
-{{project-name}}-common = { path = "../{{project-name}}-common", features=["userspace"] }
+{{project-name}}-common = { path = "../{{project-name}}-common", features=["user"] }
 anyhow = "1.0.42"
 ctrlc = "3.2"
 {% if program_type == "uprobe" %}libc = "0.2.102"{% endif %}
