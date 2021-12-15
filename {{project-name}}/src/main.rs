@@ -68,50 +68,50 @@ fn try_main() -> Result<(), anyhow::Error> {
     ))?;
     {% case program_type -%}
     {%- when "kprobe", "kretprobe" -%}
-    let program: &mut KProbe = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut KProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{kprobe}}", 0)?;
     {%- when "uprobe", "uretprobe" -%}
-    let program: &mut UProbe = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut UProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", opt.pid.try_into()?)?;
     {%- when "sock_ops" -%}
-    let program: &mut SockOps = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut SockOps = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup)?;
     {%- when "sk_msg" -%}
     let sock_map = SockHash::<MapRefMut, SockKey>::try_from(bpf.map_mut("{{sock_map}}")?)?;
-    let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
     prog.attach(&sock_map)?;
     // insert sockets to the map using sock_map.insert here, or from a sock_ops program
     {%- when "xdp" -%}
-    let program: &mut Xdp = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut Xdp = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach(&opt.iface, XdpFlags::default())?;
     {%- when "classifier" -%}
     tc::qdisc_add_clsact(&opt.iface)?;
-    let program: &mut SchedClassifier = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut SchedClassifier = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach(&opt.iface, TcAttachType::{{direction}})?;
     {%- when "cgroup_skb" -%}
-    let program: &mut CgroupSkb = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut CgroupSkb = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup, CgroupSkbAttachType::{{direction}})?;
     {%- when "tracepoint" -%}
-    let program: &mut TracePoint = bpf.program_mut("{{crate_name}}")?.try_into()?;
+    let program: &mut TracePoint = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{tracepoint_category}}", "{{tracepoint_name}}")?;
     {%- when "lsm" -%}
     let btf = Btf::from_sys_fs()?;
-    let program: &mut Lsm = bpf.program_mut("{{lsm_hook}}")?.try_into()?;
+    let program: &mut Lsm = bpf.program_mut("{{lsm_hook}}").unwrap().try_into()?;
     program.load("{{lsm_hook}}", &btf)?;
     program.attach()?;
     {%- when "tp_btf" -%}
     let btf = Btf::from_sys_fs()?;
-    let program: &mut BtfTracePoint = bpf.program_mut("{{tracepoint_name}}")?.try_into()?;
+    let program: &mut BtfTracePoint = bpf.program_mut("{{tracepoint_name}}").unwrap().try_into()?;
     program.load("{{tracepoint_name}}", &btf)?;
     program.attach()?;
     {%- endcase %}
