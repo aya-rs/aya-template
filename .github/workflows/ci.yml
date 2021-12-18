@@ -47,7 +47,7 @@ jobs:
             components: rust-src
 
       - name: Install bpf-linker
-        run: cargo +nightly install bpf-linker
+        run: cargo +nightly install --git https://github.com/dave-tucker/bpf-linker --branch btf bpf-linker
 
       - name: Install Cargo Generate
         run: cargo install --git https://github.com/cargo-generate/cargo-generate cargo-generate

@@ -1,6 +1,8 @@
 [build]
 target-dir = "../target"
 target = "bpfel-unknown-none"
+# Experimental: Enable BTF Support. Requires btf-linker 0.9.3+
+# rustflags = ["-C", "link-args=--btf"]
 
 [unstable]
 build-std = ["core"]
