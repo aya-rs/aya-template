@@ -129,35 +129,35 @@ unsafe fn try_{{crate_name}}(_ctx: XdpContext) -> Result<u32, u32> {
 {%- when "classifier" %}
 use aya_bpf::{
     macros::classifier,
-    programs::SkSkbContext,
+    programs::SkBuffContext,
 };
 
 #[classifier(name="{{crate_name}}")]
-pub fn {{crate_name}}(ctx: SkSkbContext) -> i32 {
+pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     match unsafe { try_{{crate_name}}(ctx) } {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SkSkbContext) -> Result<i32, i32> {
+unsafe fn try_{{crate_name}}(_ctx: SkBuffContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "cgroup_skb" %}
 use aya_bpf::{
     macros::cgroup_skb,
-    programs::SkSkbContext,
+    programs::SkBuffContext,
 };
 
 #[cgroup_skb(name="{{crate_name}}")]
-pub fn {{crate_name}}(ctx: SkSkbContext) -> i32 {
+pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     match unsafe { try_{{crate_name}}(ctx) } {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SkSkbContext) -> Result<i32, i32> {
+unsafe fn try_{{crate_name}}(_ctx: SkBuffContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "tracepoint" %}
