@@ -18,6 +18,9 @@ case "$PROG_TYPE" in
     "kprobe"|"kretprobe")
         ADDITIONAL_ARGS="-d kprobe=test"
         ;;
+    "fentry"|"fexit")
+        ADDITIONAL_ARGS="-d fn_name=try_to_wake_up"
+        ;;
     "uprobe"|"uretprobe")
         ADDITIONAL_ARGS="-d uprobe_target=testlib -d uprobe_fn_name=testfn"
         ;;

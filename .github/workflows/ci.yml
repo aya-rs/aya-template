@@ -21,6 +21,8 @@ jobs:
         program:
           - kprobe
           - kretprobe
+          - fentry
+          - fexit
           - uprobe
           - uretprobe
           - sock_ops
@@ -38,13 +40,13 @@ jobs:
       - name: Install latest stable
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: stable
+          toolchain: stable
 
       - name: Install latest nightly
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: nightly
-            components: rust-src
+          toolchain: nightly
+          components: rust-src
 
       - name: Install bpf-linker
         run: cargo +nightly install bpf-linker

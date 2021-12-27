@@ -35,6 +35,40 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
 unsafe fn try_{{crate_name}}(_ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
+{%- when "fentry" %}
+use aya_bpf::{
+    macros::fentry,
+    programs::FEntryContext,
+};
+
+#[fentry(name="{{crate_name}}")]
+pub fn {{crate_name}}(ctx: FEntryContext) -> u32 {
+    match unsafe { try_{{crate_name}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{crate_name}}(_ctx: FEntryContext) -> Result<u32, u32> {
+    Ok(0)
+}
+{%- when "fexit" %}
+use aya_bpf::{
+    macros::fexit,
+    programs::FExitContext,
+};
+
+#[fexit(name="{{crate_name}}")]
+pub fn {{crate_name}}(ctx: FExitContext) -> u32 {
+    match unsafe { try_{{crate_name}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{crate_name}}(_ctx: FExitContext) -> Result<u32, u32> {
+    Ok(0)
+}
 {%- when "uprobe" %}
 use aya_bpf::{
     macros::uprobe,

@@ -5,12 +5,31 @@ ignore = [".github", "test.sh"]
 [placeholders.program_type]
 type = "string"
 prompt = "Which type of eBPF program?"
-choices = ["kprobe", "kretprobe", "uprobe", "uretprobe", "sock_ops", "sk_msg", "xdp", "classifier", "cgroup_skb", "tracepoint", "lsm", "tp_btf"]
+choices = [
+    "kprobe",
+    "kretprobe",
+    "fentry",
+    "fexit",
+    "uprobe",
+    "uretprobe",
+    "sock_ops",
+    "sk_msg",
+    "xdp",
+    "classifier",
+    "cgroup_skb",
+    "tracepoint",
+    "lsm",
+    "tp_btf"
+]
 default = "xdp"
 
 [conditional.'program_type == "kprobe" || program_type == "kretprobe"'.placeholders.kprobe]
 type = "string"
 prompt = "Where to attach the (k|kret)probe? (e.g try_to_wake_up)"
+
+[conditional.'program_type == "fentry" || program_type == "fexit"'.placeholders.fn_name]
+type = "string"
+prompt = "Where to attach the f(entry|exit)? (e.g try_to_wake_up)"
 
 [conditional.'program_type == "uprobe" || program_type == "uretprobe"'.placeholders.uprobe_target]
 type = "string"
