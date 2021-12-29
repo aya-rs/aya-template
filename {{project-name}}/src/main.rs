@@ -2,6 +2,10 @@ use aya::{Bpf, include_bytes_aligned};
 {% case program_type -%}
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
+{%- when "fentry" -%}
+use aya::{programs::FEntry, Btf};
+{%- when "fexit" -%}
+use aya::{programs::FExit, Btf};
 {%- when "uprobe", "uretprobe" -%}
 use aya::programs::UProbe;
 {%- when "sock_ops" -%}
@@ -71,6 +75,16 @@ fn try_main() -> Result<(), anyhow::Error> {
     let program: &mut KProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{kprobe}}", 0)?;
+    {%- when "fentry" -%}
+    let btf = Btf::from_sys_fs()?;
+    let program: &mut FEntry = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load("{{fn_name}}", &btf)?;
+    program.attach()?;
+    {%- when "fexit" -%}
+    let btf = Btf::from_sys_fs()?;
+    let program: &mut FExit = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load("{{fn_name}}", &btf)?;
+    program.attach()?;
     {%- when "uprobe", "uretprobe" -%}
     let program: &mut UProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
