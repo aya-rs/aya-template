@@ -16,6 +16,7 @@ use aya::programs::SkMsg;
 use {{crate_name}}_common::SockKey;
 use std::convert::TryFrom;
 {%- when "xdp" -%}
+use anyhow::Context;
 use aya::programs::{Xdp, XdpFlags};
 {%- when "classifier" -%}
 use aya::programs::{tc, SchedClassifier, TcAttachType};
@@ -104,7 +105,8 @@ fn try_main() -> Result<(), anyhow::Error> {
     {%- when "xdp" -%}
     let program: &mut Xdp = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(&opt.iface, XdpFlags::default())?;
+    program.attach(&opt.iface, XdpFlags::default())
+        .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
     {%- when "classifier" -%}
     tc::qdisc_add_clsact(&opt.iface)?;
     let program: &mut SchedClassifier = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
