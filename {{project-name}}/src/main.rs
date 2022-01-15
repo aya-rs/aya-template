@@ -14,6 +14,7 @@ use aya::programs::SockOps;
 use aya::maps::{MapRefMut,SockHash};
 use aya::programs::SkMsg;
 use {{crate_name}}_common::SockKey;
+use std::convert::TryFrom;
 {%- when "xdp" -%}
 use aya::programs::{Xdp, XdpFlags};
 {%- when "classifier" -%}
@@ -28,7 +29,7 @@ use aya::{programs::Lsm, Btf};
 use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
 use std::{
-    convert::{TryFrom,TryInto},
+    convert::TryInto,
     sync::Arc,
     sync::atomic::{AtomicBool, Ordering},
     thread,
