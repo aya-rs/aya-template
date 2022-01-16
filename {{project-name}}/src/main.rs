@@ -29,20 +29,11 @@ use aya::{programs::Lsm, Btf};
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
-use std::{
-    convert::TryInto,
-    sync::Arc,
-    sync::atomic::{AtomicBool, Ordering},
-    thread,
-    time::Duration,
-};
+use log::info;
+use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
+use std::convert::TryInto;
 use structopt::StructOpt;
-
-fn main() {
-    if let Err(e) = try_main() {
-        eprintln!("error: {:#}", e);
-    }
-}
+use tokio::signal;
 
 #[derive(Debug, StructOpt)]
 struct Opt {
@@ -58,8 +49,20 @@ struct Opt {
     {%- endif %}
 }
 
-fn try_main() -> Result<(), anyhow::Error> {
+#[tokio::main]
+async fn main() -> Result<(), anyhow::Error> {
     let opt = Opt::from_args();
+
+    TermLogger::init(
+        LevelFilter::Debug,
+        ConfigBuilder::new()
+            .set_target_level(LevelFilter::Error)
+            .set_location_level(LevelFilter::Error)
+            .build(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )?;
+
     // This will include youe eBPF object file as raw bytes at compile-time and load it at
     // runtime. This approach is recommended for most real-world use cases. If you would
     // like to specify the eBPF program at runtime rather than at compile-time, you can
@@ -133,18 +136,9 @@ fn try_main() -> Result<(), anyhow::Error> {
     program.attach()?;
     {%- endcase %}
 
-    let running = Arc::new(AtomicBool::new(true));
-    let r = running.clone();
-
-    ctrlc::set_handler(move || {
-        r.store(false, Ordering::SeqCst);
-    }).expect("Error setting Ctrl-C handler");
-
-    println!("Waiting for Ctrl-C...");
-    while running.load(Ordering::SeqCst) {
-        thread::sleep(Duration::from_millis(500))
-    }
-    println!("Exiting...");
+    info!("Waiting for Ctrl-C...");
+    signal::ctrl_c().await?;
+    info!("Exiting...");
 
     Ok(())
 }

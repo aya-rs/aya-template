@@ -8,9 +8,11 @@ publish = false
 aya = { git = "https://github.com/aya-rs/aya", branch="main" }
 {{project-name}}-common = { path = "../{{project-name}}-common", features=["user"] }
 anyhow = "1.0.42"
-ctrlc = "3.2"
 {% if program_type == "uprobe" %}libc = "0.2.102"{% endif %}
-structopt = { version = "0.3"}
+log = "0.4"
+simplelog = "0.11"
+structopt = { version = "0.3" }
+tokio = { version = "1.5.0", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
 
 [[bin]]
 name = "{{project-name}}"
