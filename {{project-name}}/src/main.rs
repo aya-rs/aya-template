@@ -111,7 +111,9 @@ async fn main() -> Result<(), anyhow::Error> {
     program.attach(&opt.iface, XdpFlags::default())
         .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
     {%- when "classifier" -%}
-    tc::qdisc_add_clsact(&opt.iface)?;
+    // error adding clsact to the interface if it is already added is harmless
+    // the full cleanup can be done with 'sudo tc qdisc del dev eth0 clsact'.
+    let _ = tc::qdisc_add_clsact(&opt.iface);
     let program: &mut SchedClassifier = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach(&opt.iface, TcAttachType::{{direction}})?;
