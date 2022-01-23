@@ -13,12 +13,13 @@ path = "src/main.rs"
 
 [profile.dev]
 panic = "abort"
-debug = 1
 opt-level = 2
 overflow-checks = false
 
 [profile.release]
 panic = "abort"
+# Experimental: Enable BTF Support. Requires btf-linker 0.9.3+
+# debug = 2
 
 [workspace]
 members = []
