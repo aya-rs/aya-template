@@ -1,4 +1,4 @@
-use aya::{Bpf, include_bytes_aligned};
+use aya::{include_bytes_aligned, Bpf};
 {% case program_type -%}
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
