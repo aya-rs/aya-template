@@ -245,6 +245,16 @@ pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
 unsafe fn try_{{tracepoint_name}}(_ctx: BtfTracePointContext) -> Result<i32, i32> {
     Ok(0)
 }
+{%- when "socket_filter" %}
+use aya_bpf::{
+    macros::socket_filter,
+    programs::SkBuffContext,
+};
+
+#[socket_filter(name="{{crate_name}}")]
+pub fn {{crate_name}}(_ctx: SkBuffContext) -> i64 {
+    return 0
+}
 {%- endcase %}
 
 #[panic_handler]

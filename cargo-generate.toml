@@ -13,6 +13,7 @@ choices = [
     "uprobe",
     "uretprobe",
     "sock_ops",
+    "sock_filter",
     "sk_msg",
     "xdp",
     "classifier",

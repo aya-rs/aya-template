@@ -28,6 +28,10 @@ use aya::programs::TracePoint;
 use aya::{programs::Lsm, Btf};
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
+{%- when "socket_filter" -%}
+use std::net::TcpStream;
+use std::os::unix::io::AsRawFd;
+use aya::programs::SocketFilter;
 {%- endcase %}
 use log::info;
 use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
@@ -131,6 +135,11 @@ async fn main() -> Result<(), anyhow::Error> {
     let program: &mut BtfTracePoint = bpf.program_mut("{{tracepoint_name}}").unwrap().try_into()?;
     program.load("{{tracepoint_name}}", &btf)?;
     program.attach()?;
+    {%- when "socket_filter" -%}
+    let client = TcpStream::connect("127.0.0.1:1234")?;
+    let prog: &mut SocketFilter = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    prog.load()?;
+    prog.attach(client.as_raw_fd())?;
     {%- endcase %}
 
     info!("Waiting for Ctrl-C...");
