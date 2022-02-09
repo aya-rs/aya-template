@@ -183,7 +183,11 @@ use aya_bpf::{
     programs::SkBuffContext,
 };
 
-#[cgroup_skb(name="{{crate_name}}")]
+{% if direction == "Ingress" -%}
+#[cgroup_skb(name="{{crate_name}}",attach="ingress")]
+{%- else -%}
+#[cgroup_skb(name="{{crate_name}}",attach="egress")]
+{%- endif %}
 pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     match unsafe { try_{{crate_name}}(ctx) } {
         Ok(ret) => ret,
