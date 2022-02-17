@@ -14,7 +14,6 @@ use aya::programs::SockOps;
 use aya::maps::{MapRefMut,SockHash};
 use aya::programs::SkMsg;
 use {{crate_name}}_common::SockKey;
-use std::convert::TryFrom;
 {%- when "xdp" -%}
 use anyhow::Context;
 use aya::programs::{Xdp, XdpFlags};
@@ -31,7 +30,6 @@ use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
 use log::info;
 use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
-use std::convert::TryInto;
 use structopt::StructOpt;
 use tokio::signal;
 
