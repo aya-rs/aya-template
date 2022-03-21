@@ -47,19 +47,19 @@ choices = [ "Ingress", "Egress" ]
 [conditional.'program_type == "sk_msg"'.placeholders.sock_map]
 type = "string"
 prompt = "Map Name (UPPER_CASE)?"
-regex = "[A-Z_]+"
+regex = "^[A-Z_]+$"
 
 [conditional.'program_type == "tracepoint"'.placeholders.tracepoint_category]
 type = "string"
 prompt = "Which tracepoint category? (e.g sched, net etc...)"
-regex = "[a-z]+"
+regex = "^[a-z_]+$"
 
 [conditional.'program_type == "tracepoint" || program_type == "tp_btf"'.placeholders.tracepoint_name]
 type = "string"
 prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
-regex = "[a-z]+"
+regex = "^[a-z_]+$"
 
 [conditional.'program_type == "lsm"'.placeholders.lsm_hook]
 type = "string"
 prompt = "Which lsm hook? (e.g file_open, task_alloc) You can find a list of hooks in include/linux/lsm_hooks.h in the kernel source tree."
-regex = "[a-z]+"
+regex = "^[a-z_]+$"
