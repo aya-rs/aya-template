@@ -10,8 +10,8 @@ pub struct Options {
     /// Set the endianness of the BPF target
     #[structopt(default_value = "bpfel-unknown-none", long)]
     pub bpf_target: Architecture,
-    /// Build profile for userspace program
-    #[structopt(default_value = "dev", long)]
+    /// Build profile for ebpf and userspace program
+    #[structopt(default_value = "release", long)]
     pub profile: String,
     /// The command used to wrap your application
     #[structopt(short, long, default_value = "sudo -E")]
