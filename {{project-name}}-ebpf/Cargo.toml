@@ -11,6 +11,12 @@ aya-bpf = { git = "https://github.com/aya-rs/aya", branch = "main" }
 name = "{{ project-name }}"
 path = "src/main.rs"
 
+[profile.dev]
+panic = "abort"
+debug = 1
+opt-level = 2
+overflow-checks = false
+
 [profile.release]
 panic = "abort"
 

@@ -35,24 +35,25 @@ pub struct Options {
     /// Set the endianness of the BPF target
     #[structopt(default_value = "bpfel-unknown-none", long)]
     pub target: Architecture,
-    /// Build profile for eBPF programs
-    #[structopt(default_value = "release", long)]
-    pub profile: String,
+    /// Build the release target
+    #[structopt(long)]
+    pub release: bool,
 }
 
 pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     let dir = PathBuf::from("{{project-name}}-ebpf");
     let target = format!("--target={}", opts.target);
-    let args = vec![
+    let mut args = vec![
         "+nightly",
         "build",
         "--verbose",
         target.as_str(),
         "-Z",
         "build-std=core",
-        "--profile",
-        opts.profile.as_str(),
     ];
+    if opts.release {
+        args.push("--release")
+    }
     let status = Command::new("cargo")
         .current_dir(&dir)
         .args(&args)
