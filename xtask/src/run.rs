@@ -10,9 +10,9 @@ pub struct Options {
     /// Set the endianness of the BPF target
     #[structopt(default_value = "bpfel-unknown-none", long)]
     pub bpf_target: Architecture,
-    /// Build profile for userspace program
-    #[structopt(default_value = "dev", long)]
-    pub profile: String,
+    /// Build and run the release target
+    #[structopt(long)]
+    pub release: bool,
     /// The command used to wrap your application
     #[structopt(short, long, default_value = "sudo -E")]
     pub runner: String,
@@ -23,7 +23,10 @@ pub struct Options {
 
 /// Build the project
 fn build(opts: &Options) -> Result<(), anyhow::Error> {
-    let args = vec!["build", "--profile", opts.profile.as_str()];
+    let mut args = vec!["build"];
+    if opts.release {
+        args.push("--release")
+    }
     let status = Command::new("cargo")
         .args(&args)
         .status()
@@ -37,17 +40,14 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     // build our ebpf program followed by our application
     build_ebpf(BuildOptions {
         target: opts.bpf_target,
-        profile: opts.profile.clone(),
+        release: opts.release,
     })
     .context("Error while building eBPF program")?;
     build(&opts).context("Error while building userspace application")?;
 
-    let target_dir = match opts.profile.as_str() {
-        "dev" | "test" => "debug",
-        "bench" | "release" => "release",
-        _ => opts.profile.as_str(),
-    };
-    let bin_path = format!("target/{}/{{project-name}}", target_dir);
+    // profile we are building (release or debug)
+    let profile = if opts.release { "release" } else { "debug" };
+    let bin_path = format!("target/{}/{{project-name}}", profile);
 
     // arguments to pass to the application
     let mut run_args: Vec<_> = opts.run_args.iter().map(String::as_str).collect();
