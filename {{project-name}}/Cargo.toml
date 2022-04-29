@@ -10,9 +10,9 @@ aya = { git = "https://github.com/aya-rs/aya", branch="main" }
 anyhow = "1.0.42"
 {% if program_type == "uprobe" %}libc = "0.2.102"{% endif %}
 log = "0.4"
-simplelog = "0.11"
+simplelog = "0.12"
 structopt = { version = "0.3" }
-tokio = { version = "1.5.0", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+tokio = { version = "1.18", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
 
 [[bin]]
 name = "{{project-name}}"
