@@ -28,28 +28,28 @@ use aya::{programs::Lsm, Btf};
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
+use clap::Parser;
 use log::info;
 use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
-use structopt::StructOpt;
 use tokio::signal;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 struct Opt {
     {% if program_type == "xdp" or program_type == "classifier" -%}
-    #[structopt(short, long, default_value = "eth0")]
+    #[clap(short, long, default_value = "eth0")]
     iface: String,
     {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" -%}
-    #[structopt(short, long, default_value = "/sys/fs/cgroup/unified")]
+    #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
     cgroup_path: String,
     {%- elsif program_type == "uprobe" or program_type == "uretprobe" -%}
-    #[structopt(short, long)]
+    #[clap(short, long)]
     pid: Option<i32>
     {%- endif %}
 }
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     TermLogger::init(
         LevelFilter::Debug,
