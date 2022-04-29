@@ -6,6 +6,7 @@ use aya_bpf::{
     macros::kprobe,
     programs::ProbeContext,
 };
+use aya_log_ebpf::info;
 
 #[kprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
@@ -15,7 +16,8 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: ProbeContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{kprobe}} called");
     Ok(0)
 }
 {%- when "kretprobe" %}
@@ -23,6 +25,7 @@ use aya_bpf::{
     macros::kretprobe,
     programs::ProbeContext,
 };
+use aya_log_ebpf::info;
 
 #[kretprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
@@ -32,7 +35,8 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: ProbeContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{kprobe}} called");
     Ok(0)
 }
 {%- when "fentry" %}
@@ -40,6 +44,7 @@ use aya_bpf::{
     macros::fentry,
     programs::FEntryContext,
 };
+use aya_log_ebpf::info;
 
 #[fentry(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: FEntryContext) -> u32 {
@@ -49,7 +54,8 @@ pub fn {{crate_name}}(ctx: FEntryContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: FEntryContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: FEntryContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{fn_name}} called");
     Ok(0)
 }
 {%- when "fexit" %}
@@ -57,6 +63,7 @@ use aya_bpf::{
     macros::fexit,
     programs::FExitContext,
 };
+use aya_log_ebpf::info;
 
 #[fexit(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: FExitContext) -> u32 {
@@ -66,7 +73,8 @@ pub fn {{crate_name}}(ctx: FExitContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: FExitContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: FExitContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{fn_name}} called");
     Ok(0)
 }
 {%- when "uprobe" %}
@@ -74,6 +82,7 @@ use aya_bpf::{
     macros::uprobe,
     programs::ProbeContext,
 };
+use aya_log_ebpf::info;
 
 #[uprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
@@ -83,7 +92,8 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: ProbeContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{uprobe_fn_name}} called by {{uprobe_target}}");
     Ok(0)
 }
 {%- when "uretprobe" %}
@@ -91,6 +101,7 @@ use aya_bpf::{
     macros::uretprobe,
     programs::ProbeContext,
 };
+use aya_log_ebpf::info;
 
 #[uretprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
@@ -100,7 +111,8 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: ProbeContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+    info!(&ctx, "function {{uprobe_fn_name}} called by {{uprobe_target}}");
     Ok(0)
 }
 {%- when "sock_ops" %}
@@ -108,6 +120,7 @@ use aya_bpf::{
     macros::sock_ops,
     programs::SockOpsContext,
 };
+use aya_log_ebpf::info;
 
 #[sock_ops(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SockOpsContext) -> u32 {
@@ -117,7 +130,8 @@ pub fn {{crate_name}}(ctx: SockOpsContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SockOpsContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: SockOpsContext) -> Result<u32, u32> {
+    info!(&ctx, "received TCP connection");
     Ok(0)
 }
 {%- when "sk_msg" %}
@@ -126,6 +140,8 @@ use aya_bpf::{
     maps::SockHash,
     programs::SkMsgContext,
 };
+use aya_log_ebpf::info;
+
 use {{crate_name}}_common::SockKey;
 
 #[map(name="{{sock_map}}")]
@@ -139,7 +155,8 @@ pub fn {{crate_name}}(ctx: SkMsgContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SkMsgContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: SkMsgContext) -> Result<u32, u32> {
+    info!(&ctx, "received a message on the socket");
     Ok(0)
 }
 {%- when "xdp" %}
@@ -148,6 +165,7 @@ use aya_bpf::{
     macros::xdp,
     programs::XdpContext,
 };
+use aya_log_ebpf::info;
 
 #[xdp(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: XdpContext) -> u32 {
@@ -157,7 +175,8 @@ pub fn {{crate_name}}(ctx: XdpContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: XdpContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
+    info!(&ctx, "received a packet");
     Ok(xdp_action::XDP_PASS)
 }
 {%- when "classifier" %}
@@ -165,6 +184,7 @@ use aya_bpf::{
     macros::classifier,
     programs::SkBuffContext,
 };
+use aya_log_ebpf::info;
 
 #[classifier(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
@@ -174,7 +194,8 @@ pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SkBuffContext) -> Result<i32, i32> {
+unsafe fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
+    info!(&ctx, "received a packet");
     Ok(0)
 }
 {%- when "cgroup_skb" %}
@@ -182,6 +203,7 @@ use aya_bpf::{
     macros::cgroup_skb,
     programs::SkBuffContext,
 };
+use aya_log_ebpf::info;
 
 #[cgroup_skb(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
@@ -191,7 +213,8 @@ pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: SkBuffContext) -> Result<i32, i32> {
+unsafe fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
+    info!(&ctx, "received a packet");
     Ok(0)
 }
 {%- when "tracepoint" %}
@@ -199,6 +222,7 @@ use aya_bpf::{
     macros::tracepoint,
     programs::TracePointContext,
 };
+use aya_log_ebpf::info;
 
 #[tracepoint(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: TracePointContext) -> u32 {
@@ -208,7 +232,8 @@ pub fn {{crate_name}}(ctx: TracePointContext) -> u32 {
     }
 }
 
-unsafe fn try_{{crate_name}}(_ctx: TracePointContext) -> Result<u32, u32> {
+unsafe fn try_{{crate_name}}(ctx: TracePointContext) -> Result<u32, u32> {
+    info!(&ctx, "tracepoint {{tracepoint_name}} called");
     Ok(0)
 }
 {%- when "lsm" %}
@@ -216,6 +241,7 @@ use aya_bpf::{
     macros::lsm,
     programs::LsmContext,
 };
+use aya_log_ebpf::info;
 
 #[lsm(name="{{lsm_hook}}")]
 pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
@@ -225,7 +251,8 @@ pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
     }
 }
 
-unsafe fn try_{{lsm_hook}}(_ctx: LsmContext) -> Result<i32, i32> {
+unsafe fn try_{{lsm_hook}}(ctx: LsmContext) -> Result<i32, i32> {
+    info!(&ctx, "lsm hook {{lsm_hook}} called");
     Ok(0)
 }
 {%- when "tp_btf" %}
@@ -233,6 +260,7 @@ use aya_bpf::{
     macros::btf_tracepoint,
     programs::BtfTracePointContext,
 };
+use aya_log_ebpf::info;
 
 #[btf_tracepoint(name="{{tracepoint_name}}")]
 pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
@@ -242,7 +270,8 @@ pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
     }
 }
 
-unsafe fn try_{{tracepoint_name}}(_ctx: BtfTracePointContext) -> Result<i32, i32> {
+unsafe fn try_{{tracepoint_name}}(ctx: BtfTracePointContext) -> Result<i32, i32> {
+    info!(&ctx, "tracepoint {{tracepoint_name}} called");
     Ok(0)
 }
 {%- endcase %}
