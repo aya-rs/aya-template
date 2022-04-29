@@ -28,6 +28,7 @@ use aya::{programs::Lsm, Btf};
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- endcase %}
+use aya_log::BpfLogger;
 use clap::Parser;
 use log::info;
 use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
@@ -73,6 +74,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut bpf = Bpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/release/{{project-name}}"
     ))?;
+    BpfLogger::init(&mut bpf)?;
     {% case program_type -%}
     {%- when "kprobe", "kretprobe" -%}
     let program: &mut KProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
