@@ -1,23 +1,23 @@
 use std::{os::unix::process::CommandExt, process::Command};
 
 use anyhow::Context as _;
-use structopt::StructOpt;
+use clap::Parser;
 
 use crate::build_ebpf::{build_ebpf, Architecture, Options as BuildOptions};
 
-#[derive(StructOpt)]
+#[derive(Debug, Parser)]
 pub struct Options {
     /// Set the endianness of the BPF target
-    #[structopt(default_value = "bpfel-unknown-none", long)]
+    #[clap(default_value = "bpfel-unknown-none", long)]
     pub bpf_target: Architecture,
     /// Build and run the release target
-    #[structopt(long)]
+    #[clap(long)]
     pub release: bool,
     /// The command used to wrap your application
-    #[structopt(short, long, default_value = "sudo -E")]
+    #[clap(short, long, default_value = "sudo -E")]
     pub runner: String,
     /// Arguments to pass to your application
-    #[structopt(name = "args", last = true)]
+    #[clap(name = "args", last = true)]
     pub run_args: Vec<String>,
 }
 
