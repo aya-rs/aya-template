@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use std::process::Command;
 
-use structopt::StructOpt;
+use clap::Parser;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Architecture {
@@ -30,13 +30,13 @@ impl std::fmt::Display for Architecture {
     }
 }
 
-#[derive(StructOpt)]
+#[derive(Debug, Parser)]
 pub struct Options {
     /// Set the endianness of the BPF target
-    #[structopt(default_value = "bpfel-unknown-none", long)]
+    #[clap(default_value = "bpfel-unknown-none", long)]
     pub target: Architecture,
     /// Build the release target
-    #[structopt(long)]
+    #[clap(long)]
     pub release: bool,
 }
 
