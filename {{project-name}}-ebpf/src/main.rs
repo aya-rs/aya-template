@@ -284,6 +284,25 @@ use aya_bpf::{
 pub fn {{crate_name}}(_ctx: SkBuffContext) -> i64 {
     return 0
 }
+{%- when "cgroup_sysctl" %}
+use aya_bpf::{
+    macros::cgroup_sysctl,
+    programs::SysctlContext,
+};
+use aya_log_ebpf::info;
+
+#[cgroup_sysctl(name="{{crate_name}}")]
+pub fn {{crate_name}}(ctx: SysctlContext) -> i32 {
+    match unsafe { try_{{crate_name}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
+    info!(&ctx, "sysctl operation called");
+    Ok(0)
+}
 {%- endcase %}
 
 #[panic_handler]

@@ -18,6 +18,7 @@ choices = [
     "xdp",
     "classifier",
     "cgroup_skb",
+    "cgroup_sysctl",
     "tracepoint",
     "lsm",
     "tp_btf"

@@ -21,6 +21,8 @@ use aya::programs::{Xdp, XdpFlags};
 use aya::programs::{tc, SchedClassifier, TcAttachType};
 {%- when "cgroup_skb" -%}
 use aya::programs::{CgroupSkb, CgroupSkbAttachType};
+{%- when "cgroup_sysctl" -%}
+use aya::programs::{CgroupSysctl};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
@@ -43,7 +45,7 @@ struct Opt {
     {% if program_type == "xdp" or program_type == "classifier" -%}
     #[clap(short, long, default_value = "eth0")]
     iface: String,
-    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" -%}
+    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" -%}
     #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
     cgroup_path: String,
     {%- elsif program_type == "uprobe" or program_type == "uretprobe" -%}
@@ -145,6 +147,11 @@ async fn main() -> Result<(), anyhow::Error> {
     let prog: &mut SocketFilter = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
     prog.attach(client.as_raw_fd())?;
+    {%- when "cgroup_sysctl" -%}
+    let program: &mut CgroupSysctl = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    let cgroup = std::fs::File::open(opt.cgroup_path)?;
+    program.load()?;
+    program.attach(cgroup)?;
     {%- endcase %}
 
     info!("Waiting for Ctrl-C...");
