@@ -32,6 +32,7 @@ jobs:
           - classifier
           - cgroup_skb
           - cgroup_sysctl
+          - cgroup_sockopt
           - tracepoint
           - lsm
           - tp_btf

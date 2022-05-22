@@ -22,7 +22,9 @@ use aya::programs::{tc, SchedClassifier, TcAttachType};
 {%- when "cgroup_skb" -%}
 use aya::programs::{CgroupSkb, CgroupSkbAttachType};
 {%- when "cgroup_sysctl" -%}
-use aya::programs::{CgroupSysctl};
+use aya::programs::CgroupSysctl;
+{%- when "cgroup_sockopt" -%}
+use aya::programs::CgroupSockopt;
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
@@ -45,7 +47,7 @@ struct Opt {
     {% if program_type == "xdp" or program_type == "classifier" -%}
     #[clap(short, long, default_value = "eth0")]
     iface: String,
-    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" -%}
+    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or "cgroup_sockopt" -%}
     #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
     cgroup_path: String,
     {%- elsif program_type == "uprobe" or program_type == "uretprobe" -%}
@@ -149,6 +151,11 @@ async fn main() -> Result<(), anyhow::Error> {
     prog.attach(client.as_raw_fd())?;
     {%- when "cgroup_sysctl" -%}
     let program: &mut CgroupSysctl = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    let cgroup = std::fs::File::open(opt.cgroup_path)?;
+    program.load()?;
+    program.attach(cgroup)?;
+    {%- when "cgroup_sockopt" -%}
+    let program: &mut CgroupSockopt = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup)?;
