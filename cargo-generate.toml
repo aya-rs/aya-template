@@ -19,6 +19,7 @@ choices = [
     "classifier",
     "cgroup_skb",
     "cgroup_sysctl",
+    "cgroup_sockopt",
     "tracepoint",
     "lsm",
     "tp_btf"
@@ -45,6 +46,11 @@ prompt = "Function name to attach the (u|uret)probe? (e.g getaddrinfo)"
 type = "string"
 prompt = "Attach direction?"
 choices = [ "Ingress", "Egress" ]
+
+[conditional.'program_type == "cgroup_sockopt"'.placeholders.sockopt_target]
+type = "string"
+prompt = "Which socket option?"
+choices = [ "getsockopt", "setsockopt" ]
 
 [conditional.'program_type == "sk_msg"'.placeholders.sock_map]
 type = "string"

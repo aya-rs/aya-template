@@ -39,6 +39,9 @@ case "$PROG_TYPE" in
     "tp_btf")
 	    ADDITIONAL_ARGS="-d tracepoint_name=net_dev_queue"
         ;;
+    "cgroup_sockopt")
+	    ADDITIONAL_ARGS="-d sockopt_target=getsockopt"
+        ;;
     *)
         ADDITIONAL_ARGS=''
 esac

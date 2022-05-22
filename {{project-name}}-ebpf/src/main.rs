@@ -303,6 +303,25 @@ unsafe fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
     info!(&ctx, "sysctl operation called");
     Ok(0)
 }
+{%- when "cgroup_sockopt" %}
+use aya_bpf::{
+    macros::cgroup_sockopt,
+    programs::SockoptContext,
+};
+use aya_log_ebpf::info;
+
+#[cgroup_sockopt({{sockopt_target}},name="{{crate_name}}")]
+pub fn {{crate_name}}(ctx: SockoptContext) -> i32 {
+    match unsafe { try_{{crate_name}}(ctx) } {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+unsafe fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
+    info!(&ctx, "{{sockopt_target}} called");
+    Ok(0)
+}
 {%- endcase %}
 
 #[panic_handler]
