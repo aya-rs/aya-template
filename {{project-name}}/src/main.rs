@@ -47,7 +47,7 @@ struct Opt {
     {% if program_type == "xdp" or program_type == "classifier" -%}
     #[clap(short, long, default_value = "eth0")]
     iface: String,
-    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or "cgroup_sockopt" -%}
+    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or program_type == "cgroup_sockopt" -%}
     #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
     cgroup_path: String,
     {%- elsif program_type == "uprobe" or program_type == "uretprobe" -%}
