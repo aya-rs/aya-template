@@ -21,6 +21,8 @@ You may also change the target architecture with the `--target` flag
 cargo build
 ```
 
+If you want to do cross compile, read [CrossCompile](./CrossCompile.md)
+
 ## Run
 
 ```bash
