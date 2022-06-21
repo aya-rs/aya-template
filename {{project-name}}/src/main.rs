@@ -56,9 +56,24 @@ struct Opt {
     {%- endif %}
 }
 
+fn bump_memlock_rlimit() -> Result<(), anyhow::Error> {
+    let rlimit = libc::rlimit {
+        rlim_cur: 128 << 20,
+        rlim_max: 128 << 20,
+    };
+
+    if unsafe { libc::setrlimit(libc::RLIMIT_MEMLOCK, &rlimit) } != 0 {
+        anyhow::bail!("Failed to increase rlimit");
+    }
+
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     let opt = Opt::parse();
+
+    bump_memlock_rlimit()?;
 
     TermLogger::init(
         LevelFilter::Debug,
