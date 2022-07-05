@@ -11,7 +11,13 @@ aya-log = "0.1"
 anyhow = "1.0.42"
 clap = { version = "3.1", features = ["derive"] }
 {%- if program_type == "uprobe" %}
-libc = "0.2.102"
+libc = "0.2"
+{%- else %}
+# Kernels before 5.11 don't use cgroup accounting, so they might reach the
+# RLIMIT_MEMLOCK when creating maps. For that case, libc is needed when raising
+# RLIMIT_MEMLOCK to RLIM_INFINITY automatically.
+#
+# libc = "0.2"
 {%- endif %}
 log = "0.4"
 simplelog = "0.12"
