@@ -82,6 +82,19 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut bpf = Bpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/release/{{project-name}}"
     ))?;
+
+    // Kernels before 5.11 don't use cgroup accounting, so they might reach the
+    // RLIMIT_MEMLOCK when creating maps. For that case, this code can be used
+    // for raising RLIMIT_MEMLOCK to RLIM_INFINITY.
+    //
+    // let ret = unsafe { libc::setrlimit(libc::RLIMIT_MEMLOCK, &libc::rlimit {
+    //     rlim_cur: libc::RLIM_INFINITY,
+    //     rlim_max: libc::RLIM_INFINITY,
+    // }) };
+    // if ret != 0 {
+    //     return Err(anyhow::anyhow!("setrlimit failed"));
+    // }
+
     BpfLogger::init(&mut bpf)?;
     {% case program_type -%}
     {%- when "kprobe", "kretprobe" -%}
