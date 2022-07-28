@@ -182,19 +182,19 @@ unsafe fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
 {%- when "classifier" %}
 use aya_bpf::{
     macros::classifier,
-    programs::SkBuffContext,
+    programs::TcContext,
 };
 use aya_log_ebpf::info;
 
 #[classifier(name="{{crate_name}}")]
-pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
+pub fn {{crate_name}}(ctx: TcContext) -> i32 {
     match unsafe { try_{{crate_name}}(ctx) } {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
+unsafe fn try_{{crate_name}}(ctx: TcContext) -> Result<i32, i32> {
     info!(&ctx, "received a packet");
     Ok(0)
 }
