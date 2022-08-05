@@ -115,7 +115,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let _ = tc::qdisc_add_clsact(&opt.iface);
     let program: &mut SchedClassifier = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(&opt.iface, TcAttachType::{{direction}})?;
+    program.attach(&opt.iface, TcAttachType::{{direction}}, 0)?;
     {%- when "cgroup_skb" -%}
     let program: &mut CgroupSkb = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
