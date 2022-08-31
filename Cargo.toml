@@ -1,2 +1,3 @@
 [workspace]
-members = ["{{project-name}}", "{{project-name}}-common", "xtask"]
+members = ["{{project-name}}", "{{project-name}}-ebpf", "{{project-name}}-common", "xtask"]
+default-members = ["{{project-name}}", "{{project-name}}-common", "xtask"]
