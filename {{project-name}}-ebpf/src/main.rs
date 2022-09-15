@@ -145,7 +145,7 @@ use aya_log_ebpf::info;
 use {{crate_name}}_common::SockKey;
 
 #[map(name="{{sock_map}}")]
-static mut {{sock_map}}: SockHash<SockKey> = SockHash::<SockKey>::with_max_entries(1024, 0);
+static {{sock_map}}: SockHash<SockKey> = SockHash::<SockKey>::with_max_entries(1024, 0);
 
 #[sk_msg(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SkMsgContext) -> u32 {
