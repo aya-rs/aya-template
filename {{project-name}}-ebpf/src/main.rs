@@ -10,13 +10,13 @@ use aya_log_ebpf::info;
 
 #[kprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{kprobe}} called");
     Ok(0)
 }
@@ -29,13 +29,13 @@ use aya_log_ebpf::info;
 
 #[kretprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{kprobe}} called");
     Ok(0)
 }
@@ -48,13 +48,13 @@ use aya_log_ebpf::info;
 
 #[fentry(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: FEntryContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: FEntryContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: FEntryContext) -> Result<u32, u32> {
     info!(&ctx, "function {{fn_name}} called");
     Ok(0)
 }
@@ -67,13 +67,13 @@ use aya_log_ebpf::info;
 
 #[fexit(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: FExitContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: FExitContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: FExitContext) -> Result<u32, u32> {
     info!(&ctx, "function {{fn_name}} called");
     Ok(0)
 }
@@ -86,13 +86,13 @@ use aya_log_ebpf::info;
 
 #[uprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{uprobe_fn_name}} called by {{uprobe_target}}");
     Ok(0)
 }
@@ -105,13 +105,13 @@ use aya_log_ebpf::info;
 
 #[uretprobe(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{uprobe_fn_name}} called by {{uprobe_target}}");
     Ok(0)
 }
@@ -124,13 +124,13 @@ use aya_log_ebpf::info;
 
 #[sock_ops(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SockOpsContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SockOpsContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: SockOpsContext) -> Result<u32, u32> {
     info!(&ctx, "received TCP connection");
     Ok(0)
 }
@@ -149,13 +149,13 @@ static {{sock_map}}: SockHash<SockKey> = SockHash::<SockKey>::with_max_entries(1
 
 #[sk_msg(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SkMsgContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SkMsgContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: SkMsgContext) -> Result<u32, u32> {
     info!(&ctx, "received a message on the socket");
     Ok(0)
 }
@@ -169,13 +169,13 @@ use aya_log_ebpf::info;
 
 #[xdp(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: XdpContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(_) => xdp_action::XDP_ABORTED,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
     info!(&ctx, "received a packet");
     Ok(xdp_action::XDP_PASS)
 }
@@ -188,13 +188,13 @@ use aya_log_ebpf::info;
 
 #[classifier(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: TcContext) -> i32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: TcContext) -> Result<i32, i32> {
+fn try_{{crate_name}}(ctx: TcContext) -> Result<i32, i32> {
     info!(&ctx, "received a packet");
     Ok(0)
 }
@@ -207,13 +207,13 @@ use aya_log_ebpf::info;
 
 #[cgroup_skb(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
+fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
     info!(&ctx, "received a packet");
     Ok(0)
 }
@@ -226,13 +226,13 @@ use aya_log_ebpf::info;
 
 #[tracepoint(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: TracePointContext) -> u32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: TracePointContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: TracePointContext) -> Result<u32, u32> {
     info!(&ctx, "tracepoint {{tracepoint_name}} called");
     Ok(0)
 }
@@ -245,13 +245,13 @@ use aya_log_ebpf::info;
 
 #[lsm(name="{{lsm_hook}}")]
 pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
-    match unsafe { try_{{lsm_hook}}(ctx) } {
+    match try_{{lsm_hook}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{lsm_hook}}(ctx: LsmContext) -> Result<i32, i32> {
+fn try_{{lsm_hook}}(ctx: LsmContext) -> Result<i32, i32> {
     info!(&ctx, "lsm hook {{lsm_hook}} called");
     Ok(0)
 }
@@ -264,13 +264,13 @@ use aya_log_ebpf::info;
 
 #[btf_tracepoint(name="{{tracepoint_name}}")]
 pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
-    match unsafe { try_{{tracepoint_name}}(ctx) } {
+    match try_{{tracepoint_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{tracepoint_name}}(ctx: BtfTracePointContext) -> Result<i32, i32> {
+fn try_{{tracepoint_name}}(ctx: BtfTracePointContext) -> Result<i32, i32> {
     info!(&ctx, "tracepoint {{tracepoint_name}} called");
     Ok(0)
 }
@@ -293,13 +293,13 @@ use aya_log_ebpf::info;
 
 #[cgroup_sysctl(name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SysctlContext) -> i32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
+fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
     info!(&ctx, "sysctl operation called");
     Ok(0)
 }
@@ -312,13 +312,13 @@ use aya_log_ebpf::info;
 
 #[cgroup_sockopt({{sockopt_target}},name="{{crate_name}}")]
 pub fn {{crate_name}}(ctx: SockoptContext) -> i32 {
-    match unsafe { try_{{crate_name}}(ctx) } {
+    match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-unsafe fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
+fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
     info!(&ctx, "{{sockopt_target}} called");
     Ok(0)
 }
