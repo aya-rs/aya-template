@@ -38,7 +38,7 @@ use aya::programs::SocketFilter;
 {%- endcase %}
 use aya_log::BpfLogger;
 use clap::Parser;
-use log::info;
+use log::{info, warn};
 use tokio::signal;
 
 #[derive(Debug, Parser)]
@@ -73,7 +73,10 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut bpf = Bpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/release/{{project-name}}"
     ))?;
-    BpfLogger::init(&mut bpf)?;
+    if let Err(e) = BpfLogger::init(&mut bpf) {
+        // This can happen if you remove all log statements from your eBPF program.
+        warn!("failed to initialize eBPF logger: {}", e);
+    }
     {% case program_type -%}
     {%- when "kprobe", "kretprobe" -%}
     let program: &mut KProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
