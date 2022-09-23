@@ -60,6 +60,7 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     // spawn the command
     let err = Command::new(args.get(0).expect("No first argument"))
         .args(args.iter().skip(1))
+        .env("RUST_LOG", "info")
         .exec();
 
     // we shouldn't get here unless the command failed to spawn
