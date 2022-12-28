@@ -22,7 +22,8 @@ choices = [
     "cgroup_sockopt",
     "tracepoint",
     "lsm",
-    "tp_btf"
+    "tp_btf",
+    "raw_tracepoint"
 ]
 default = "xdp"
 
@@ -62,7 +63,7 @@ type = "string"
 prompt = "Which tracepoint category? (e.g sched, net etc...)"
 regex = "^[a-z_]+$"
 
-[conditional.'program_type == "tracepoint" || program_type == "tp_btf"'.placeholders.tracepoint_name]
+[conditional.'program_type == "tracepoint" || program_type == "tp_btf" || program_type == "raw_tracepoint"'.placeholders.tracepoint_name]
 type = "string"
 prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
 regex = "^[a-z_]+$"

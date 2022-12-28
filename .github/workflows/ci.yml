@@ -36,6 +36,7 @@ jobs:
           - tracepoint
           - lsm
           - tp_btf
+          - raw_tracepoint
 
     steps:
       - uses: actions/checkout@v2

@@ -322,6 +322,25 @@ fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
     info!(&ctx, "{{sockopt_target}} called");
     Ok(0)
 }
+{%- when "raw_tracepoint" %}
+use aya_bpf::{
+    macros::raw_tracepoint,
+    programs::RawTracePointContext,
+};
+use aya_log_ebpf::info;
+
+#[raw_tracepoint(name="{{crate_name}}")]
+pub fn {{crate_name}}(ctx: RawTracePointContext) -> i32 {
+    match try_{{crate_name}}(ctx) {
+        Ok(ret) => ret,
+        Err(ret) => ret,
+    }
+}
+
+fn try_{{crate_name}}(ctx: RawTracePointContext) -> Result<i32, i32> {
+    info!(&ctx, "tracepoint {{tracepoint_name}} called");
+    Ok(0)
+}
 {%- endcase %}
 
 #[panic_handler]
