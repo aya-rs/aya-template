@@ -35,6 +35,8 @@ use aya::{programs::BtfTracePoint, Btf};
 use std::net::TcpStream;
 use std::os::unix::io::AsRawFd;
 use aya::programs::SocketFilter;
+{%- when "raw_tracepoint" -%}
+use aya::programs::RawTracePoint;
 {%- endcase %}
 use aya_log::BpfLogger;
 use clap::Parser;
@@ -153,6 +155,10 @@ async fn main() -> Result<(), anyhow::Error> {
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup)?;
+    {%- when "raw_tracepoint" -%}
+    let program: &mut RawTracePoint = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    program.attach("{{tracepoint_name}}")?;
     {%- endcase %}
 
     info!("Waiting for Ctrl-C...");

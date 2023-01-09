@@ -42,6 +42,9 @@ case "$PROG_TYPE" in
     "cgroup_sockopt")
 	    ADDITIONAL_ARGS="-d sockopt_target=getsockopt"
         ;;
+    "raw_tracepoint")
+        ADDITIONAL_ARGS="-d tracepoint_name=sys_enter"
+        ;;
     *)
         ADDITIONAL_ARGS=''
 esac
