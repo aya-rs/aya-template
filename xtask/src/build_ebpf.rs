@@ -1,5 +1,4 @@
-use std::path::PathBuf;
-use std::process::Command;
+use std::{path::PathBuf, process::Command};
 
 use clap::Parser;
 
@@ -55,7 +54,7 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
         args.push("--release")
     }
     let status = Command::new("cargo")
-        .current_dir(&dir)
+        .current_dir(dir)
         .args(&args)
         .status()
         .expect("failed to build bpf program");
