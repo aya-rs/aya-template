@@ -1,4 +1,3 @@
-use aya::{include_bytes_aligned, Bpf};
 {% case program_type -%}
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
@@ -41,38 +40,35 @@ use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
 {%- endcase %}
+use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
+{% if program_types_with_opts contains program_type -%}
 use clap::Parser;
+{% endif -%}
 use log::{info, warn};
 use tokio::signal;
 
-{% case program_type %}
-{%- when
-    "xdp", "classifier", "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt", "uprobe", "uretprobe" -%}
+{% if program_types_with_opts contains program_type -%}
 #[derive(Debug, Parser)]
 struct Opt {
-    {% if program_type == "xdp" or program_type == "classifier" -%}
+{%- if program_type == "xdp" or program_type == "classifier" %}
     #[clap(short, long, default_value = "eth0")]
     iface: String,
-    {%- elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or program_type == "cgroup_sockopt" -%}
+{% elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or program_type == "cgroup_sockopt" %}
     #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
     cgroup_path: String,
-    {%- elsif program_type == "uprobe" or program_type == "uretprobe" -%}
+{% elsif program_type == "uprobe" or program_type == "uretprobe" %}
     #[clap(short, long)]
     pid: Option<i32>
-    {%- endif %}
+{% endif -%}
 }
-{%- endcase %}
 
+{% endif -%}
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    {% case program_type %}
-    {%- when
-        "xdp", "classifier", "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt", "uprobe", "uretprobe" -%}
+{%- if program_types_with_opts contains program_type %}
     let opt = Opt::parse();
-
-    {%- endcase %}
-
+{% endif %}
     env_logger::init();
 
     // This will include your eBPF object file as raw bytes at compile-time and load it at

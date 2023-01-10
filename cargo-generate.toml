@@ -73,3 +73,6 @@ regex = "^[a-z_]+$"
 type = "string"
 prompt = "Which lsm hook? (e.g file_open, task_alloc) You can find a list of hooks in include/linux/lsm_hooks.h in the kernel source tree."
 regex = "^[a-z_]+$"
+
+[hooks]
+pre = ["pre-script.rhai"]
