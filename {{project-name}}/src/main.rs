@@ -43,6 +43,9 @@ use clap::Parser;
 use log::{info, warn};
 use tokio::signal;
 
+{% case program_type %}
+{%- when
+    "xdp", "classifier", "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt", "uprobe", "uretprobe" -%}
 #[derive(Debug, Parser)]
 struct Opt {
     {% if program_type == "xdp" or program_type == "classifier" -%}
@@ -56,10 +59,16 @@ struct Opt {
     pid: Option<i32>
     {%- endif %}
 }
+{%- endcase %}
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
+    {% case program_type %}
+    {%- when
+        "xdp", "classifier", "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt", "uprobe", "uretprobe" -%}
     let opt = Opt::parse();
+
+    {%- endcase %}
 
     env_logger::init();
 
