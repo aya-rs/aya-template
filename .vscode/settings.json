@@ -1,3 +1,4 @@
 {
-  "rust-analyzer.linkedProjects": ["Cargo.toml", "{{project-name}}-ebpf/Cargo.toml"]
+  "rust-analyzer.checkOnSave.allTargets": false,
+  "rust-analyzer.checkOnSave.command": "clippy"
 }
