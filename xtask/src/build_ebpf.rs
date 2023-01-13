@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::Command};
+use std::{collections::HashMap, env, path::PathBuf, process::Command};
 
 use clap::Parser;
 
@@ -43,7 +43,6 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     let dir = PathBuf::from("{{project-name}}-ebpf");
     let target = format!("--target={}", opts.target);
     let mut args = vec![
-        "+nightly",
         "build",
         "--verbose",
         target.as_str(),
@@ -53,8 +52,18 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     if opts.release {
         args.push("--release")
     }
+
+    // Command::new creates a child process which inherits all env variables. This means env
+    // vars set by the cargo xtask command are also inherited. All env vars related to the
+    // cargo xtask invocation are removed.
+    let filtered_env: HashMap<String, String> = env::vars()
+        .filter(|&(ref k, _)| !k.starts_with("CARGO") && !k.starts_with("RUST"))
+        .collect();
+
     let status = Command::new("cargo")
         .current_dir(dir)
+        .env_clear()
+        .envs(&filtered_env)
         .args(&args)
         .status()
         .expect("failed to build bpf program");
