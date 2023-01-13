@@ -19,7 +19,7 @@ pub struct Options {
     /// Arguments to pass to your application
     #[clap(name = "args", last = true)]
     pub run_args: Vec<String>,
-    /// Set the rust toolchain
+    /// Set the rust toolchain (only nightly toolchains are supported)
     #[clap(default_value = "+nightly", long)]
     pub toolchain: String,
 }

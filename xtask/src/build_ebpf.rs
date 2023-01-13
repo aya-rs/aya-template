@@ -34,7 +34,7 @@ pub struct Options {
     /// Set the endianness of the BPF target
     #[clap(default_value = "bpfel-unknown-none", long)]
     pub target: Architecture,
-    /// Set the rust toolchain
+    /// Set the rust toolchain (only nightly toolchains are supported)
     #[clap(default_value = "+nightly", long)]
     pub toolchain: String,
     /// Build the release target
