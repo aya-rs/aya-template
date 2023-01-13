@@ -45,8 +45,13 @@ pub struct Options {
 pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     let dir = PathBuf::from("{{project-name}}-ebpf");
     let target = format!("--target={}", opts.target);
+    let toolchain = if opts.toolchain.starts_with('+') {
+        opts.toolchain
+    }  else {
+        format!("+{}", opts.toolchain)
+    };
     let mut args = vec![
-        opts.toolchain.as_str(),
+        toolchain.as_str(),
         "build",
         "--verbose",
         target.as_str(),
