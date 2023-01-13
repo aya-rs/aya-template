@@ -10,6 +10,9 @@ pub struct Options {
     /// Set the endianness of the BPF target
     #[clap(default_value = "bpfel-unknown-none", long)]
     pub bpf_target: Architecture,
+    /// Set the rust toolchain for the BPF program (only nightly toolchains are supported)
+    #[clap(default_value = "+nightly", long)]
+    pub bpf_toolchain: String,
     /// Build and run the release target
     #[clap(long)]
     pub release: bool,
@@ -19,9 +22,6 @@ pub struct Options {
     /// Arguments to pass to your application
     #[clap(name = "args", last = true)]
     pub run_args: Vec<String>,
-    /// Set the rust toolchain for the BPF program (only nightly toolchains are supported)
-    #[clap(default_value = "+nightly", long)]
-    pub bpf_toolchain: String,
 }
 
 /// Build the project
@@ -44,7 +44,7 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     build_ebpf(BuildOptions {
         target: opts.bpf_target,
         release: opts.release,
-        bpf_toolchain: opts.bpf_toolchain.clone(),
+        toolchain: opts.bpf_toolchain.clone(),
     })
     .context("Error while building eBPF program")?;
     build(&opts).context("Error while building userspace application")?;

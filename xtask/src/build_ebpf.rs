@@ -36,7 +36,7 @@ pub struct Options {
     pub target: Architecture,
     /// Set the rust toolchain for the BPF program (only nightly toolchains are supported)
     #[clap(default_value = "+nightly", long)]
-    pub bpf_toolchain: String,
+    pub toolchain: String,
     /// Build the release target
     #[clap(long)]
     pub release: bool,
@@ -45,13 +45,13 @@ pub struct Options {
 pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     let dir = PathBuf::from("{{project-name}}-ebpf");
     let target = format!("--target={}", opts.target);
-    let bpf_toolchain = if opts.bpf_toolchain.starts_with('+') {
-        opts.bpf_toolchain
+    let toolchain = if opts.toolchain.starts_with('+') {
+        opts.toolchain
     }  else {
-        format!("+{}", opts.bpf_toolchain)
+        format!("+{}", opts.toolchain)
     };
     let mut args = vec![
-        bpf_toolchain.as_str(),
+        toolchain.as_str(),
         "build",
         "--verbose",
         target.as_str(),
