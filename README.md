@@ -14,7 +14,7 @@ cargo xtask build-ebpf
 
 To perform a release build you can use the `--release` flag.
 You may also change the target architecture with the `--target` flag.
-If you require a specific version of the toolchain, you can use the `--toolchain` flag (only nightly toolchains are supported).
+If you require a specific version of the toolchain for the BPF program, you can use the `--bpf_toolchain` flag (only nightly toolchains are supported).
 
 ## Build Userspace
 
