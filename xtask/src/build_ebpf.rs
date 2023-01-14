@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env, path::PathBuf, process::Command};
+use std::{path::PathBuf, process::Command};
 
 use clap::Parser;
 
@@ -54,16 +54,12 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     }
 
     // Command::new creates a child process which inherits all env variables. This means env
-    // vars set by the cargo xtask command are also inherited. All env vars related to the
-    // cargo xtask invocation are removed.
-    let filtered_env: HashMap<String, String> = env::vars()
-        .filter(|&(ref k, _)| !k.starts_with("CARGO") && !k.starts_with("RUST"))
-        .collect();
+    // vars set by the cargo xtask command are also inherited. RUSTUP_TOOLCHAIN is removed
+    // so the rust-toolchain.toml file in the -ebpf folder is honored.
 
     let status = Command::new("cargo")
         .current_dir(dir)
-        .env_clear()
-        .envs(&filtered_env)
+        .env_remove("RUSTUP_TOOLCHAIN")
         .args(&args)
         .status()
         .expect("failed to build bpf program");
