@@ -15,35 +15,35 @@ trap clean_up EXIT
 
 pushd $TMP_DIR
 case "$PROG_TYPE" in
-    "kprobe"|"kretprobe")
-        ADDITIONAL_ARGS="-d kprobe=test"
-        ;;
-    "fentry"|"fexit")
-        ADDITIONAL_ARGS="-d fn_name=try_to_wake_up"
-        ;;
-    "uprobe"|"uretprobe")
-        ADDITIONAL_ARGS="-d uprobe_target=testlib -d uprobe_fn_name=testfn"
-        ;;
-    "tracepoint")
-	    ADDITIONAL_ARGS="-d tracepoint_category=net -d tracepoint_name=net_dev_queue"
+    "cgroup_sockopt")
+	    ADDITIONAL_ARGS="-d sockopt_target=getsockopt"
         ;;
     "classifier"|"cgroup_skb")
         ADDITIONAL_ARGS="-d direction=Ingress"
         ;;
-    "sk_msg")
-        ADDITIONAL_ARGS="-d sock_map=TEST"
+    "fentry"|"fexit")
+        ADDITIONAL_ARGS="-d fn_name=try_to_wake_up"
+        ;;
+    "kprobe"|"kretprobe")
+        ADDITIONAL_ARGS="-d kprobe=test"
         ;;
     "lsm")
         ADDITIONAL_ARGS="-d lsm_hook=file_open"
         ;;
+    "raw_tracepoint")
+        ADDITIONAL_ARGS="-d tracepoint_name=sys_enter"
+        ;;
+    "sk_msg")
+        ADDITIONAL_ARGS="-d sock_map=TEST"
+        ;;
     "tp_btf")
 	    ADDITIONAL_ARGS="-d tracepoint_name=net_dev_queue"
         ;;
-    "cgroup_sockopt")
-	    ADDITIONAL_ARGS="-d sockopt_target=getsockopt"
+    "tracepoint")
+	    ADDITIONAL_ARGS="-d tracepoint_category=net -d tracepoint_name=net_dev_queue"
         ;;
-    "raw_tracepoint")
-        ADDITIONAL_ARGS="-d tracepoint_name=sys_enter"
+    "uprobe"|"uretprobe")
+        ADDITIONAL_ARGS="-d uprobe_target=testlib -d uprobe_fn_name=testfn"
         ;;
     *)
         ADDITIONAL_ARGS=''
