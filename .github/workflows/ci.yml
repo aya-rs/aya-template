@@ -46,14 +46,14 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Install latest nightly
+      - name: Install latest nightly (pinned to nightly-2023-01-10, https://github.com/aya-rs/aya/issues/490)
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: nightly-2023-01-10
           components: rust-src
 
       - name: Install bpf-linker
-        run: cargo +nightly install bpf-linker
+        run: cargo install bpf-linker
 
       - name: Install Cargo Generate
         run: cargo install --git https://github.com/cargo-generate/cargo-generate cargo-generate
