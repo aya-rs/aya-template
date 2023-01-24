@@ -6,24 +6,24 @@ ignore = [".github", "test.sh"]
 type = "string"
 prompt = "Which type of eBPF program?"
 choices = [
-    "kprobe",
-    "kretprobe",
+    "cgroup_skb",
+    "cgroup_sockopt",
+    "cgroup_sysctl",
+    "classifier",
     "fentry",
     "fexit",
-    "uprobe",
-    "uretprobe",
+    "kprobe",
+    "kretprobe",
+    "lsm",
+    "raw_tracepoint",
+    "sk_msg",
     "sock_ops",
     "socket_filter",
-    "sk_msg",
-    "xdp",
-    "classifier",
-    "cgroup_skb",
-    "cgroup_sysctl",
-    "cgroup_sockopt",
-    "tracepoint",
-    "lsm",
     "tp_btf",
-    "raw_tracepoint"
+    "tracepoint",
+    "uprobe",
+    "uretprobe",
+    "xdp",
 ]
 default = "xdp"
 
