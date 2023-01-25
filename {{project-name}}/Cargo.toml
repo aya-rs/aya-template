@@ -6,10 +6,12 @@ publish = false
 
 [dependencies]
 aya = { version = ">=0.11", features=["async_tokio"] }
+{% if program_types_with_opts contains program_type -%}
+clap = { version = "4.0", features = ["derive"] }
+{% endif -%}
 aya-log = "0.1"
 {{project-name}}-common = { path = "../{{project-name}}-common", features=["user"] }
 anyhow = "1.0.42"
-clap = { version = "4.0", features = ["derive"] }
 env_logger = "0.10"
 {%- if program_type == "uprobe" %}
 libc = "0.2"

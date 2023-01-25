@@ -12,4 +12,4 @@ pub struct SockKey {
 
 #[cfg(feature = "user")]
 unsafe impl aya::Pod for SockKey {}
-{%- endif -%}
+{%- endif %}
