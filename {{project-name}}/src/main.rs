@@ -29,6 +29,9 @@ use aya::programs::CgroupSockopt;
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
 use aya::{programs::Lsm, Btf};
+{%- when "perf_event" -%}
+use aya::programs::{perf_event, PerfEvent};
+use aya::util::online_cpus;
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- when "socket_filter" -%}
@@ -164,6 +167,19 @@ async fn main() -> Result<(), anyhow::Error> {
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup)?;
+    {%- when "perf_event" -%}
+    // This will raise scheduled events on each CPU at 1 HZ, triggered by the kernel based
+    // on clock ticks.
+    let program: &mut PerfEvent = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    for cpu in online_cpus()? {
+        program.attach(
+            perf_event::PerfTypeId::Software,
+            perf_event::perf_sw_ids::PERF_COUNT_SW_CPU_CLOCK as u64,
+            perf_event::PerfEventScope::AllProcessesOneCpu { cpu },
+            perf_event::SamplePolicy::Frequency(1),
+        )?;
+    }
     {%- when "raw_tracepoint" -%}
     let program: &mut RawTracePoint = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
