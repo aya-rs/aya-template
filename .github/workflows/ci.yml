@@ -29,14 +29,15 @@ jobs:
           - socket_filter
           - sk_msg
           - xdp
-          - classifier
           - cgroup_skb
-          - cgroup_sysctl
           - cgroup_sockopt
-          - tracepoint
+          - cgroup_sysctl
+          - classifier
           - lsm
-          - tp_btf
+          - perf_event
           - raw_tracepoint
+          - tp_btf
+          - tracepoint
 
     steps:
       - uses: actions/checkout@v2

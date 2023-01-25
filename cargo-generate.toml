@@ -15,6 +15,7 @@ choices = [
     "kprobe",
     "kretprobe",
     "lsm",
+    "perf_event",
     "raw_tracepoint",
     "sk_msg",
     "sock_ops",
