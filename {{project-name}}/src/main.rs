@@ -59,7 +59,7 @@ struct Opt {
     cgroup_path: String,
 {% elsif program_type == "uprobe" or program_type == "uretprobe" %}
     #[clap(short, long)]
-    pid: Option<i32>
+    pid: Option<i32>,
 {% endif -%}
 }
 
@@ -105,7 +105,7 @@ async fn main() -> Result<(), anyhow::Error> {
     {%- when "uprobe", "uretprobe" -%}
     let program: &mut UProbe = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", opt.pid.try_into()?)?;
+    program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", opt.pid)?;
     {%- when "sock_ops" -%}
     let program: &mut SockOps = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
