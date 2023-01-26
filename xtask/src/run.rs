@@ -63,6 +63,8 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
         .status()
         .expect("failed to run the command");
 
-    assert!(status.success());
+    if !status.success() {
+        anyhow::bail!("Failed to run `{}`", args.join(" "));
+    }
     Ok(())
 }
