@@ -47,10 +47,10 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Install latest nightly (pinned to nightly-2023-01-10, https://github.com/aya-rs/aya/issues/490)
+      - name: Install latest nightly
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2023-01-10
+          toolchain: nightly
           components: rust-src
 
       - name: Install bpf-linker
