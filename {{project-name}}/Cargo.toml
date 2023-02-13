@@ -11,13 +11,13 @@ aya-log = "0.1"
 clap = { version = "4.1", features = ["derive"] }
 {% endif -%}
 {{project-name}}-common = { path = "../{{project-name}}-common", features = ["user"] }
-anyhow = "1.0.68"
+anyhow = "1"
 env_logger = "0.10"
 {%- if program_type == "uprobe" %}
 libc = "0.2"
 {%- endif %}
 log = "0.4"
-tokio = { version = "1.24", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+tokio = { version = "1.25", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
 
 [[bin]]
 name = "{{project-name}}"
