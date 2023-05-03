@@ -63,4 +63,6 @@ jobs:
         with:
           tool: bpf-linker,cargo-generate
 
+      - run: sudo apt update
+      - run: sudo apt install expect
       - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
