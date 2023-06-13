@@ -10,7 +10,7 @@ use aya::programs::UProbe;
 {%- when "sock_ops" -%}
 use aya::programs::SockOps;
 {%- when "sk_msg" -%}
-use aya::maps::{MapRefMut,SockHash};
+use aya::maps::SockHash;
 use aya::programs::SkMsg;
 use {{crate_name}}_common::SockKey;
 {%- when "xdp" -%}
@@ -112,10 +112,12 @@ async fn main() -> Result<(), anyhow::Error> {
     program.load()?;
     program.attach(cgroup)?;
     {%- when "sk_msg" -%}
-    let sock_map = SockHash::<MapRefMut, SockKey>::try_from(bpf.map_mut("{{sock_map}}")?)?;
+    let sock_map: SockHash::<_, SockKey> = bpf.map("{{sock_map}}").unwrap().try_into()?;
+    let map_fd = sock_map.fd()?;
+
     let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
-    prog.attach(&sock_map)?;
+    prog.attach(map_fd)?;
     // insert sockets to the map using sock_map.insert here, or from a sock_ops program
     {%- when "xdp" -%}
     let program: &mut Xdp = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
