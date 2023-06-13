@@ -53,11 +53,13 @@ jobs:
           toolchain: nightly
           components: rust-src
 
+      - uses: Swatinem/rust-cache@v2
+
       - name: Install bpf-linker
         run: cargo install bpf-linker
 
       - name: Install Cargo Generate
-        run: cargo install --git https://github.com/cargo-generate/cargo-generate cargo-generate
+        run: cargo install cargo-generate
 
       - name: Run tests
         run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
