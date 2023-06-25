@@ -18,6 +18,7 @@ libc = "0.2"
 {%- endif %}
 log = "0.4"
 tokio = { version = "1.25", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+rlimit = "0.9.1"
 
 [[bin]]
 name = "{{project-name}}"

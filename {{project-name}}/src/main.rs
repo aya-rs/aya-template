@@ -46,6 +46,7 @@ use aya_log::BpfLogger;
 use clap::Parser;
 {% endif -%}
 use log::{info, warn};
+use rlimit::Resource;
 use tokio::signal;
 
 {% if program_types_with_opts contains program_type -%}
@@ -70,6 +71,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let opt = Opt::parse();
 {% endif %}
     env_logger::init();
+
+    if !Resource::MEMLOCK
+        .set(rlimit::INFINITY, rlimit::INFINITY)
+        .is_ok()
+    {
+        warn!("cannot remove mem lock");
+    }
+
 
     // This will include your eBPF object file as raw bytes at compile-time and load it at
     // runtime. This approach is recommended for most real-world use cases. If you would
