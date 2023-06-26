@@ -46,7 +46,6 @@ use aya_log::BpfLogger;
 use clap::Parser;
 {% endif -%}
 use log::{info, warn};
-use rlimit::Resource;
 use tokio::signal;
 
 {% if program_types_with_opts contains program_type -%}
