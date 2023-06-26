@@ -13,12 +13,9 @@ clap = { version = "4.1", features = ["derive"] }
 {{project-name}}-common = { path = "../{{project-name}}-common", features = ["user"] }
 anyhow = "1"
 env_logger = "0.10"
-{%- if program_type == "uprobe" %}
-libc = "0.2"
-{%- endif %}
 log = "0.4"
 tokio = { version = "1.25", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
-rlimit = "0.9.1"
+libc = "0.2"
 
 [[bin]]
 name = "{{project-name}}"
