@@ -71,13 +71,14 @@ async fn main() -> Result<(), anyhow::Error> {
 {% endif %}
     env_logger::init();
 
-    let rlim = libc::rlimit{
+    // Allow current process to lock memory for eBPF resources.
+    let rlim = libc::rlimit {
         rlim_cur: libc::RLIM_INFINITY,
         rlim_max: libc::RLIM_INFINITY,
     };
     let ret = unsafe { libc::setrlimit(libc::RLIMIT_MEMLOCK, &rlim) };
-    if !ret == 0{
-        warn!("cannot remove mem lock");
+    if ret != 0 {
+        warn!("remove limit on locked memory failed, ret is: {}", ret);
     }
 
     // This will include your eBPF object file as raw bytes at compile-time and load it at
