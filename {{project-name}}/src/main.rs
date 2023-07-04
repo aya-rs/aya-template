@@ -45,7 +45,7 @@ use aya_log::BpfLogger;
 {% if program_types_with_opts contains program_type -%}
 use clap::Parser;
 {% endif -%}
-use log::{info, warn};
+use log::{info, warn, debug};
 use tokio::signal;
 
 {% if program_types_with_opts contains program_type -%}
