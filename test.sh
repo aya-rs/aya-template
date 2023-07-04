@@ -51,7 +51,13 @@ esac
 
 cargo generate -v --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
-cargo xtask build-ebpf
-cargo build
+cargo xtask run &
+PID=$!
+if [ sleep 10 && ps -p $PID ]; then
+    kill -9 $PID
+else
+    echo "Project is not running!"
+    exit 1
+fi
 popd
 exit 0
