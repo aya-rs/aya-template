@@ -1,2 +1,2 @@
 [workspace]
-members = ["{{project-name}}", "{{project-name}}-common", "xtask"]
+members = ["xtask", "{{project-name}}", "{{project-name}}-common"]
