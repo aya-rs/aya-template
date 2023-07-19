@@ -47,12 +47,12 @@ prompt = "Function name to attach the (u|uret)probe? (e.g getaddrinfo)"
 [conditional.'program_type == "cgroup_skb" || program_type == "classifier"'.placeholders.direction]
 type = "string"
 prompt = "Attach direction?"
-choices = [ "Ingress", "Egress" ]
+choices = ["Egress", "Ingress"]
 
 [conditional.'program_type == "cgroup_sockopt"'.placeholders.sockopt_target]
 type = "string"
 prompt = "Which socket option?"
-choices = [ "getsockopt", "setsockopt" ]
+choices = ["getsockopt", "setsockopt"]
 
 [conditional.'program_type == "sk_msg"'.placeholders.sock_map]
 type = "string"
