@@ -1,5 +1,6 @@
-#![no_std]
+#![no_builtins]
 #![no_main]
+#![no_std]
 {% case program_type -%}
 {%- when "kprobe" %}
 use aya_bpf::{macros::kprobe, programs::ProbeContext};
