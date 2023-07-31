@@ -55,11 +55,10 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Install bpf-linker
-        run: cargo install bpf-linker
-
-      - name: Install Cargo Generate
-        run: cargo install cargo-generate
+      - name: Install deps
+        uses: taiki-e/install-action@v2
+        with:
+          tool: bpf-linker,cargo-generate
 
       - name: Run tests
         run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
