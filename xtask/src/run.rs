@@ -40,7 +40,6 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     // build our ebpf program followed by our application
     build_ebpf(BuildOptions {
         target: opts.bpf_target,
-        release: opts.release,
     })
     .context("Error while building eBPF program")?;
     build(&opts).context("Error while building userspace application")?;
