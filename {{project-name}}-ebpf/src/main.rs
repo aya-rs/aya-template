@@ -5,7 +5,7 @@
 use aya_bpf::{macros::kprobe, programs::ProbeContext};
 use aya_log_ebpf::info;
 
-#[kprobe(name = "{{crate_name}}")]
+#[kprobe]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -21,7 +21,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
 use aya_bpf::{macros::kretprobe, programs::ProbeContext};
 use aya_log_ebpf::info;
 
-#[kretprobe(name = "{{crate_name}}")]
+#[kretprobe]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -40,7 +40,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[fentry(name="{{crate_name}}")]
+#[fentry(function="{{fn_name}}")]
 pub fn {{crate_name}}(ctx: FEntryContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -59,7 +59,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[fexit(name="{{crate_name}}")]
+#[fexit(function="{{fn_name}}")]
 pub fn {{crate_name}}(ctx: FExitContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -78,7 +78,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[uprobe(name="{{crate_name}}")]
+#[uprobe]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -97,7 +97,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[uretprobe(name="{{crate_name}}")]
+#[uretprobe]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -116,7 +116,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[sock_ops(name="{{crate_name}}")]
+#[sock_ops]
 pub fn {{crate_name}}(ctx: SockOpsContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -141,7 +141,7 @@ use {{crate_name}}_common::SockKey;
 #[map(name="{{sock_map}}")]
 static {{sock_map}}: SockHash<SockKey> = SockHash::<SockKey>::with_max_entries(1024, 0);
 
-#[sk_msg(name="{{crate_name}}")]
+#[sk_msg]
 pub fn {{crate_name}}(ctx: SkMsgContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -157,7 +157,7 @@ fn try_{{crate_name}}(ctx: SkMsgContext) -> Result<u32, u32> {
 use aya_bpf::{bindings::xdp_action, macros::xdp, programs::XdpContext};
 use aya_log_ebpf::info;
 
-#[xdp(name = "{{crate_name}}")]
+#[xdp]
 pub fn {{crate_name}}(ctx: XdpContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -173,7 +173,7 @@ fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
 use aya_bpf::{macros::classifier, programs::TcContext};
 use aya_log_ebpf::info;
 
-#[classifier(name = "{{crate_name}}")]
+#[classifier]
 pub fn {{crate_name}}(ctx: TcContext) -> i32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -192,7 +192,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[cgroup_skb(name="{{crate_name}}")]
+#[cgroup_skb]
 pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -211,7 +211,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[tracepoint(name = "{{crate_name}}")]
+#[tracepoint]
 pub fn {{crate_name}}(ctx: TracePointContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -230,7 +230,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[lsm(name = "{{lsm_hook}}")]
+#[lsm(hook = "{{lsm_hook}}")]
 pub fn {{lsm_hook}}(ctx: LsmContext) -> i32 {
     match try_{{lsm_hook}}(ctx) {
         Ok(ret) => ret,
@@ -249,7 +249,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[btf_tracepoint(name = "{{tracepoint_name}}")]
+#[btf_tracepoint(function="{{tracepoint_name}}")]
 pub fn {{tracepoint_name}}(ctx: BtfTracePointContext) -> i32 {
     match try_{{tracepoint_name}}(ctx) {
         Ok(ret) => ret,
@@ -267,7 +267,7 @@ use aya_bpf::{
     programs::SkBuffContext,
 };
 
-#[socket_filter(name = "{{crate_name}}")]
+#[socket_filter]
 pub fn {{crate_name}}(_ctx: SkBuffContext) -> i64 {
     return 0
 }
@@ -278,7 +278,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 
-#[cgroup_sysctl(name = "{{crate_name}}")]
+#[cgroup_sysctl]
 pub fn {{crate_name}}(ctx: SysctlContext) -> i32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -294,7 +294,7 @@ fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
 use aya_bpf::{macros::cgroup_sockopt, programs::SockoptContext};
 use aya_log_ebpf::info;
 
-#[cgroup_sockopt({{sockopt_target}}, name = "{{crate_name}}")]
+#[cgroup_sockopt({{sockopt_target}})]
 pub fn {{crate_name}}(ctx: SockoptContext) -> i32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -310,7 +310,7 @@ fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
 use aya_bpf::{macros::raw_tracepoint, programs::RawTracePointContext};
 use aya_log_ebpf::info;
 
-#[raw_tracepoint(name = "{{crate_name}}")]
+#[raw_tracepoint(tracepoint="{{tracepoint_name}}")]
 pub fn {{crate_name}}(ctx: RawTracePointContext) -> i32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
