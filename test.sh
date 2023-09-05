@@ -49,7 +49,7 @@ case "$PROG_TYPE" in
         ADDITIONAL_ARGS=''
 esac
 
-cargo generate -v --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
+cargo generate --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
 cargo xtask build-ebpf
 cargo build
