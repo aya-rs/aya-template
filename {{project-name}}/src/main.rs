@@ -35,7 +35,6 @@ use aya::util::online_cpus;
 use aya::{programs::BtfTracePoint, Btf};
 {%- when "socket_filter" -%}
 use std::net::TcpStream;
-use std::os::unix::io::AsRawFd;
 use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
@@ -165,7 +164,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let client = TcpStream::connect("127.0.0.1:1234")?;
     let prog: &mut SocketFilter = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
-    prog.attach(client.as_raw_fd())?;
+    prog.attach(client)?;
     {%- when "cgroup_sysctl" -%}
     let program: &mut CgroupSysctl = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
