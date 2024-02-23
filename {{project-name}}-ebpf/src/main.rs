@@ -170,7 +170,7 @@ fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
     Ok(xdp_action::XDP_PASS)
 }
 {%- when "classifier" %}
-use aya_ebpf::{macros::classifier, programs::TcContext};
+use aya_ebpf::{bindings::TC_ACT_PIPE, macros::classifier, programs::TcContext};
 use aya_log_ebpf::info;
 
 #[classifier]
@@ -183,7 +183,7 @@ pub fn {{crate_name}}(ctx: TcContext) -> i32 {
 
 fn try_{{crate_name}}(ctx: TcContext) -> Result<i32, i32> {
     info!(&ctx, "received a packet");
-    Ok(0)
+    Ok(TC_ACT_PIPE)
 }
 {%- when "cgroup_skb" %}
 use aya_ebpf::{
