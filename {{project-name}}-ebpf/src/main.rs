@@ -2,7 +2,7 @@
 #![no_main]
 {% case program_type -%}
 {%- when "kprobe" %}
-use aya_bpf::{macros::kprobe, programs::ProbeContext};
+use aya_ebpf::{macros::kprobe, programs::ProbeContext};
 use aya_log_ebpf::info;
 
 #[kprobe]
