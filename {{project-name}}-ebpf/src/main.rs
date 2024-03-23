@@ -18,7 +18,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "kretprobe" %}
-use aya_bpf::{macros::kretprobe, programs::ProbeContext};
+use aya_ebpf::{macros::kretprobe, programs::ProbeContext};
 use aya_log_ebpf::info;
 
 #[kretprobe]
@@ -34,7 +34,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "fentry" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::fentry,
     programs::FEntryContext,
 };
@@ -53,7 +53,7 @@ fn try_{{crate_name}}(ctx: FEntryContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "fexit" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::fexit,
     programs::FExitContext,
 };
@@ -72,7 +72,7 @@ fn try_{{crate_name}}(ctx: FExitContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "uprobe" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::uprobe,
     programs::ProbeContext,
 };
@@ -91,7 +91,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "uretprobe" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::uretprobe,
     programs::ProbeContext,
 };
@@ -110,7 +110,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "sock_ops" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::sock_ops,
     programs::SockOpsContext,
 };
@@ -129,7 +129,7 @@ fn try_{{crate_name}}(ctx: SockOpsContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "sk_msg" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::{map, sk_msg},
     maps::SockHash,
     programs::SkMsgContext,
@@ -154,7 +154,7 @@ fn try_{{crate_name}}(ctx: SkMsgContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "xdp" %}
-use aya_bpf::{bindings::xdp_action, macros::xdp, programs::XdpContext};
+use aya_ebpf::{bindings::xdp_action, macros::xdp, programs::XdpContext};
 use aya_log_ebpf::info;
 
 #[xdp]
@@ -170,7 +170,7 @@ fn try_{{crate_name}}(ctx: XdpContext) -> Result<u32, u32> {
     Ok(xdp_action::XDP_PASS)
 }
 {%- when "classifier" %}
-use aya_bpf::{macros::classifier, programs::TcContext};
+use aya_ebpf::{macros::classifier, programs::TcContext};
 use aya_log_ebpf::info;
 
 #[classifier]
@@ -186,7 +186,7 @@ fn try_{{crate_name}}(ctx: TcContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "cgroup_skb" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::cgroup_skb,
     programs::SkBuffContext,
 };
@@ -205,7 +205,7 @@ fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "tracepoint" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::tracepoint,
     programs::TracePointContext,
 };
@@ -224,7 +224,7 @@ fn try_{{crate_name}}(ctx: TracePointContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "lsm" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::lsm,
     programs::LsmContext,
 };
@@ -243,7 +243,7 @@ fn try_{{lsm_hook}}(ctx: LsmContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "tp_btf" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::btf_tracepoint,
     programs::BtfTracePointContext,
 };
@@ -262,7 +262,7 @@ fn try_{{tracepoint_name}}(ctx: BtfTracePointContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "socket_filter" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::socket_filter,
     programs::SkBuffContext,
 };
@@ -272,7 +272,7 @@ pub fn {{crate_name}}(_ctx: SkBuffContext) -> i64 {
     return 0
 }
 {%- when "cgroup_sysctl" %}
-use aya_bpf::{
+use aya_ebpf::{
     macros::cgroup_sysctl,
     programs::SysctlContext,
 };
@@ -291,7 +291,7 @@ fn try_{{crate_name}}(ctx: SysctlContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "cgroup_sockopt" %}
-use aya_bpf::{macros::cgroup_sockopt, programs::SockoptContext};
+use aya_ebpf::{macros::cgroup_sockopt, programs::SockoptContext};
 use aya_log_ebpf::info;
 
 #[cgroup_sockopt({{sockopt_target}})]
@@ -307,7 +307,7 @@ fn try_{{crate_name}}(ctx: SockoptContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "raw_tracepoint" %}
-use aya_bpf::{macros::raw_tracepoint, programs::RawTracePointContext};
+use aya_ebpf::{macros::raw_tracepoint, programs::RawTracePointContext};
 use aya_log_ebpf::info;
 
 #[raw_tracepoint(tracepoint="{{tracepoint_name}}")]
@@ -323,7 +323,7 @@ fn try_{{crate_name}}(ctx: RawTracePointContext) -> Result<i32, i32> {
     Ok(0)
 }
 {%- when "perf_event" %}
-use aya_bpf::{
+use aya_ebpf::{
     helpers::bpf_get_smp_processor_id, macros::perf_event, programs::PerfEventContext, BpfContext,
 };
 use aya_log_ebpf::info;
