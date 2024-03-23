@@ -324,7 +324,7 @@ fn try_{{crate_name}}(ctx: RawTracePointContext) -> Result<i32, i32> {
 }
 {%- when "perf_event" %}
 use aya_ebpf::{
-    helpers::bpf_get_smp_processor_id, macros::perf_event, programs::PerfEventContext, BpfContext,
+    helpers::bpf_get_smp_processor_id, macros::perf_event, programs::PerfEventContext, EbpfContext,
 };
 use aya_log_ebpf::info;
 

@@ -39,8 +39,8 @@ use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
 {%- endcase %}
-use aya::{include_bytes_aligned, Bpf};
-use aya_log::BpfLogger;
+use aya::{include_bytes_aligned, Ebpf};
+use aya_log::EbpfLogger;
 {% if program_types_with_opts contains program_type -%}
 use clap::Parser;
 {% endif -%}
@@ -86,14 +86,14 @@ async fn main() -> Result<(), anyhow::Error> {
     // like to specify the eBPF program at runtime rather than at compile-time, you can
     // reach for `Bpf::load_file` instead.
     #[cfg(debug_assertions)]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
+    let mut bpf = Ebpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/debug/{{project-name}}"
     ))?;
     #[cfg(not(debug_assertions))]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
+    let mut bpf = Ebpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/release/{{project-name}}"
     ))?;
-    if let Err(e) = BpfLogger::init(&mut bpf) {
+    if let Err(e) = EbpfLogger::init(&mut bpf) {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
     }
