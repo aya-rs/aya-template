@@ -122,11 +122,11 @@ async fn main() -> Result<(), anyhow::Error> {
     program.load()?;
     program.attach(cgroup)?;
     {%- when "sk_msg" -%}
-    let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    prog.load()?;
-
     let sock_map: SockHash::<_, SockKey> = bpf.map("{{sock_map}}").unwrap().try_into()?;
     let map_fd = sock_map.fd();
+
+    let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    prog.load()?;
     prog.attach(map_fd)?;
     // insert sockets to the map using sock_map.insert here, or from a sock_ops program
     {%- when "xdp" -%}
