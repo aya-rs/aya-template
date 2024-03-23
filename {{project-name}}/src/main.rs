@@ -127,7 +127,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
-    prog.attach(map_fd)?;
+    prog.attach(map_fd.into())?;
     // insert sockets to the map using sock_map.insert here, or from a sock_ops program
     {%- when "xdp" -%}
     let program: &mut Xdp = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
@@ -186,6 +186,7 @@ async fn main() -> Result<(), anyhow::Error> {
             perf_event::perf_sw_ids::PERF_COUNT_SW_CPU_CLOCK as u64,
             perf_event::PerfEventScope::AllProcessesOneCpu { cpu },
             perf_event::SamplePolicy::Frequency(1),
+            true,
         )?;
     }
     {%- when "raw_tracepoint" -%}
