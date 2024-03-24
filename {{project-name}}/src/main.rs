@@ -39,8 +39,8 @@ use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
 {%- endcase %}
-use aya::{include_bytes_aligned, Bpf};
-use aya_log::BpfLogger;
+use aya::{include_bytes_aligned, Ebpf};
+use aya_log::EbpfLogger;
 {% if program_types_with_opts contains program_type -%}
 use clap::Parser;
 {% endif -%}
@@ -86,14 +86,14 @@ async fn main() -> Result<(), anyhow::Error> {
     // like to specify the eBPF program at runtime rather than at compile-time, you can
     // reach for `Bpf::load_file` instead.
     #[cfg(debug_assertions)]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
+    let mut bpf = Ebpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/debug/{{project-name}}"
     ))?;
     #[cfg(not(debug_assertions))]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
+    let mut bpf = Ebpf::load(include_bytes_aligned!(
         "../../target/bpfel-unknown-none/release/{{project-name}}"
     ))?;
-    if let Err(e) = BpfLogger::init(&mut bpf) {
+    if let Err(e) = EbpfLogger::init(&mut bpf) {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
     }
@@ -123,11 +123,11 @@ async fn main() -> Result<(), anyhow::Error> {
     program.attach(cgroup)?;
     {%- when "sk_msg" -%}
     let sock_map: SockHash::<_, SockKey> = bpf.map("{{sock_map}}").unwrap().try_into()?;
-    let map_fd = sock_map.fd()?;
+    let map_fd = sock_map.fd().try_clone()?;
 
     let prog: &mut SkMsg = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
-    prog.attach(map_fd)?;
+    prog.attach(&map_fd)?;
     // insert sockets to the map using sock_map.insert here, or from a sock_ops program
     {%- when "xdp" -%}
     let program: &mut Xdp = bpf.program_mut("{{crate_name}}").unwrap().try_into()?;
@@ -186,6 +186,7 @@ async fn main() -> Result<(), anyhow::Error> {
             perf_event::perf_sw_ids::PERF_COUNT_SW_CPU_CLOCK as u64,
             perf_event::PerfEventScope::AllProcessesOneCpu { cpu },
             perf_event::SamplePolicy::Frequency(1),
+            true,
         )?;
     }
     {%- when "raw_tracepoint" -%}
