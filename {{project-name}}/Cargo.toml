@@ -5,8 +5,8 @@ edition = "2021"
 publish = false
 
 [dependencies]
-aya = { git = "https://github.com/aya-rs/aya", features = ["async_tokio"] }
-aya-log = { git = "https://github.com/aya-rs/aya" }
+aya = "0.12"
+aya-log = "0.2"
 {% if program_types_with_opts contains program_type -%}
 clap = { version = "4.1", features = ["derive"] }
 {% endif -%}
