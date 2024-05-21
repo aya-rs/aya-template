@@ -24,8 +24,8 @@ pub struct Options {
 
 /// Build and run the project
 pub fn run(opts: Options) -> Result<(), anyhow::Error> {
-     // Build our ebpf program and the project
-     build(BuildOptions{
+    // Build our ebpf program and the project
+    build(BuildOptions{
         bpf_target: opts.bpf_target,
         release: opts.release,
     }).context("Error while building project")?;
