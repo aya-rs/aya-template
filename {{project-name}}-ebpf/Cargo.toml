@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aya-bpf = { git = "https://github.com/aya-rs/aya" }
-aya-log-ebpf = { git = "https://github.com/aya-rs/aya" }
+aya-ebpf = "0.1.0"
+aya-log-ebpf = "0.1.0"
 {{ project-name }}-common = { path = "../{{ project-name }}-common" }
 
 [[bin]]
