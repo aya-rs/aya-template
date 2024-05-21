@@ -19,6 +19,12 @@ You may also change the target architecture with the `--target` flag.
 cargo build
 ```
 
+## Build eBPF and Userspace
+
+```bash
+cargo xtask build
+```
+
 ## Run
 
 ```bash
