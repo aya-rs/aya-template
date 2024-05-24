@@ -86,13 +86,15 @@ async fn main() -> Result<(), anyhow::Error> {
     // like to specify the eBPF program at runtime rather than at compile-time, you can
     // reach for `Bpf::load_file` instead.
     #[cfg(debug_assertions)]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/debug/{{project-name}}"
-    ))?;
+    let mut bpf = Bpf::load(include_bytes_aligned!(concat!(
+        std::env!("CARGO_TARGET_DIR"),
+        "/bpfel-unknown-none/debug/{{project-name}}"
+    )))?;
     #[cfg(not(debug_assertions))]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/release/{{project-name}}"
-    ))?;
+    let mut bpf = Bpf::load(include_bytes_aligned!(concat!(
+        std::env!("CARGO_TARGET_DIR"),
+        "/bpfel-unknown-none/release/{{project-name}}"
+    )))?;
     if let Err(e) = BpfLogger::init(&mut bpf) {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
