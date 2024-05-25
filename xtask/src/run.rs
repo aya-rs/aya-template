@@ -32,8 +32,8 @@ pub fn run(opts: Options) -> Result<(), anyhow::Error> {
     
     // profile we are building (release or debug)
     let profile = if opts.release { "release" } else { "debug" };
-    let target_dir = std::env!("CARGO_TARGET_DIR");
-    let bin_path = format!("{target_dir}/{profile}/{{project-name}}");
+    let target_path = std::env::var("CARGO_TARGET_DIR").unwrap_or("target".into());
+    let bin_path = format!("{target_path}/{profile}/{{project-name}}");
 
     // arguments to pass to the application
     let mut run_args: Vec<_> = opts.run_args.iter().map(String::as_str).collect();
