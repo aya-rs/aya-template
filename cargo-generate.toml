@@ -71,7 +71,7 @@ regex = "^[a-z_]+$"
 
 [conditional.'program_type == "lsm"'.placeholders.lsm_hook]
 type = "string"
-prompt = "Which lsm hook? (e.g file_open, task_alloc) You can find a list of hooks in include/linux/lsm_hooks.h in the kernel source tree."
+prompt = "Which lsm hook? (e.g file_open, task_alloc) You can find a list of hooks in include/linux/lsm_hook_defs.h in the kernel source tree."
 regex = "^[a-z_]+$"
 
 [hooks]
