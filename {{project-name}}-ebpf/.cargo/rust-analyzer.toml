@@ -1,0 +1,3 @@
+[rust-analyzer]
+cargo.target = "bpfel-unknown-none"
+checkOnSave.allTargets = false
