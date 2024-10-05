@@ -1,0 +1,5 @@
+[target]
+cargo.target = "bpfel-unknown-none"
+
+[checkOnSave]
+allTargets = false
