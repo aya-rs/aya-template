@@ -18,18 +18,18 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
     Ok(0)
 }
 {%- when "kretprobe" %}
-use aya_ebpf::{macros::kretprobe, programs::ProbeContext};
+use aya_ebpf::{macros::kretprobe, programs::RetProbeContext};
 use aya_log_ebpf::info;
 
 #[kretprobe]
-pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
+pub fn {{crate_name}}(ctx: RetProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: RetProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{kprobe}} called");
     Ok(0)
 }
@@ -93,19 +93,19 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
 {%- when "uretprobe" %}
 use aya_ebpf::{
     macros::uretprobe,
-    programs::ProbeContext,
+    programs::RetProbeContext,
 };
 use aya_log_ebpf::info;
 
 #[uretprobe]
-pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
+pub fn {{crate_name}}(ctx: RetProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
         Err(ret) => ret,
     }
 }
 
-fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
+fn try_{{crate_name}}(ctx: RetProbeContext) -> Result<u32, u32> {
     info!(&ctx, "function {{uprobe_fn_name}} called by {{uprobe_target}}");
     Ok(0)
 }
