@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aya-ebpf = "0.1.1"
-aya-log-ebpf = "0.1.1"
 {{ project-name }}-common = { path = "../{{ project-name }}-common" }
+
+aya-ebpf = { workspace = true }
+aya-log-ebpf = { workspace = true }
 
 [[bin]]
 name = "{{ project-name }}"

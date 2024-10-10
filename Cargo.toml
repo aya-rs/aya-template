@@ -1,3 +1,16 @@
 [workspace]
 resolver = "2"
 members = ["xtask", "{{project-name}}", "{{project-name}}-common"]
+
+[workspace.dependencies]
+aya = { version = "0.13.0", default-features = false }
+aya-ebpf = { version = "0.1.1", default-features = false }
+aya-log = { version = "0.2.1", default-features = false }
+aya-log-ebpf = { version = "0.1.1", default-features = false }
+
+anyhow = { version = "1", default-features = false }
+clap = { version = "4.1", default-features = false }
+env_logger = { version = "0.10", default-features = false }
+libc = { version = "0.2", default-features = false }
+log = { version = "0.4", default-features = false }
+tokio = { version = "1.25", default-features = false }

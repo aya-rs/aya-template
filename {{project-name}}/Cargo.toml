@@ -5,17 +5,19 @@ edition = "2021"
 publish = false
 
 [dependencies]
-aya = "0.13"
-aya-log = "0.2"
-{% if program_types_with_opts contains program_type -%}
-clap = { version = "4.1", features = ["derive"] }
-{% endif -%}
 {{project-name}}-common = { path = "../{{project-name}}-common", features = ["user"] }
-anyhow = "1"
-env_logger = "0.10"
-libc = "0.2"
-log = "0.4"
-tokio = { version = "1.25", features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+
+anyhow = { workspace = true }
+aya = { workspace = true }
+aya-log = { workspace = true }
+env_logger = {workspace = true }
+libc = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
+
+{% if program_types_with_opts contains program_type -%}
+clap = { workspace = true, features = ["derive"] }
+{% endif -%}
 
 [[bin]]
 name = "{{project-name}}"
