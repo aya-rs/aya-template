@@ -269,7 +269,7 @@ use aya_ebpf::{
 
 #[socket_filter]
 pub fn {{crate_name}}(_ctx: SkBuffContext) -> i64 {
-    return 0
+    0
 }
 {%- when "cgroup_sysctl" %}
 use aya_ebpf::{
