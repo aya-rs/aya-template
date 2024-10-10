@@ -34,7 +34,7 @@ case "$PROG_TYPE" in
         ADDITIONAL_ARGS="-d tracepoint_name=sys_enter"
         ;;
     "sk_msg")
-        ADDITIONAL_ARGS="-d sock_map=TEST"
+        ADDITIONAL_ARGS="-d sock_map=SOCK_MAP"
         ;;
     "tp_btf")
 	    ADDITIONAL_ARGS="-d tracepoint_name=net_dev_queue"
@@ -51,7 +51,7 @@ esac
 
 cargo generate --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
-cargo xtask build-ebpf
-cargo build
+cargo xtask build
+cargo xtask build --release
 popd
 exit 0
