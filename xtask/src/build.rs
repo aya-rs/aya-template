@@ -15,28 +15,27 @@ pub struct Options {
     pub release: bool,
 }
 
-/// Build the project
-fn build_project(opts: &Options) -> Result<(), anyhow::Error> {
-    let mut args = vec!["build"];
-    if opts.release {
-        args.push("--release")
-    }
-    let status = Command::new("cargo")
-        .args(&args)
-        .status()
-        .expect("failed to build userspace");
-    assert!(status.success());
-    Ok(())
-}
-
-/// Build our ebpf program and the project
+/// Build our ebpf program and the userspace program.
 pub fn build(opts: Options) -> Result<(), anyhow::Error> {
-    // build our ebpf program followed by our application
+    let Options {
+        bpf_target,
+        release,
+    } = opts;
+
+    // Build our ebpf program.
     build_ebpf(BuildOptions {
-        target: opts.bpf_target,
-        release: opts.release,
-    })
-    .context("Error while building eBPF program")?;
-    build_project(&opts).context("Error while building userspace application")?;
+        target: bpf_target,
+        release,
+    })?;
+
+    // Build our userspace program.
+    let mut cmd = Command::new("cargo");
+    cmd.arg("build");
+    if release {
+        cmd.arg("--release");
+    }
+    let status = cmd.status().context("failed to build userspace")?;
+    anyhow::ensure!(status.success(), "failed to build userspace program: {}", status);
+
     Ok(())
 }

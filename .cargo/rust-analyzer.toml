@@ -1,2 +1,0 @@
-[rust-analyzer]
-linkedProjects = ["Cargo.toml", "{{project-name}}-ebpf/Cargo.toml"]

@@ -138,7 +138,7 @@ use aya_log_ebpf::info;
 
 use {{crate_name}}_common::SockKey;
 
-#[map(name="{{sock_map}}")]
+#[map]
 static {{sock_map}}: SockHash<SockKey> = SockHash::<SockKey>::with_max_entries(1024, 0);
 
 #[sk_msg]
@@ -353,7 +353,8 @@ fn try_{{crate_name}}(ctx: PerfEventContext) -> Result<u32, u32> {
 }
 {%- endcase %}
 
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
-    unsafe { core::hint::unreachable_unchecked() }
+    loop {}
 }
