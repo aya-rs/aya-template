@@ -85,14 +85,7 @@ async fn main() -> Result<(), anyhow::Error> {
     // runtime. This approach is recommended for most real-world use cases. If you would
     // like to specify the eBPF program at runtime rather than at compile-time, you can
     // reach for `Bpf::load_file` instead.
-    #[cfg(debug_assertions)]
-    let mut ebpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/debug/{{project-name}}"
-    ))?;
-    #[cfg(not(debug_assertions))]
-    let mut ebpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/release/{{project-name}}"
-    ))?;
+    let mut ebpf = Ebpf::load(include_bytes_aligned!(concat!(env!("OUT_DIR"), "/{{project-name}}")))?;
     if let Err(e) = EbpfLogger::init(&mut ebpf) {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);

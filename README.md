@@ -4,29 +4,7 @@
 
 1. Install bpf-linker: `cargo install bpf-linker`
 
-## Build eBPF
+## Build, Run
 
-```bash
-cargo xtask build-ebpf
-```
-
-To perform a release build you can use the `--release` flag.
-You may also change the target architecture with the `--target` flag.
-
-## Build Userspace
-
-```bash
-cargo build
-```
-
-## Build eBPF and Userspace
-
-```bash
-cargo xtask build
-```
-
-## Run
-
-```bash
-RUST_LOG=info cargo xtask run
-```
+Use `cargo build`, `cargo run`, etc. as normal. Cargo build scripts are used to
+automatically build the eBPF correctly and include it in the program.
