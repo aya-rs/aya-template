@@ -51,6 +51,7 @@ esac
 
 cargo generate --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
+cargo +nightly fmt --all -- --check
 cargo build --package test
 cargo build --package test --release
 # We cannot run clippy over the whole workspace at once due to feature unification. Since both test
