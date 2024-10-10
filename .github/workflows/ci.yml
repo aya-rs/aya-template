@@ -45,23 +45,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install latest stable
-        uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          toolchain: stable
-
-      - name: Install latest nightly
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: nightly
           components: rust-src
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Install deps
-        uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@v2
         with:
           tool: bpf-linker,cargo-generate
 
-      - name: Run tests
-        run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
+      - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
