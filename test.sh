@@ -51,12 +51,11 @@ esac
 
 cargo generate --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" ${ADDITIONAL_ARGS}
 pushd test
-cargo xtask build
-cargo xtask build --release
+cargo build --package test
+cargo build --package test --release
 # We cannot run clippy over the whole workspace at once due to feature unification. Since both test
-# and test-ebpf both depend on test-common and test activates test-common's aya dependency, we end
-# up trying to compile the panic handler twice: once from the bpf program, and again from std via
-# aya.
+# and test-ebpf depend on test-common and test activates test-common's aya dependency, we end up
+# trying to compile the panic handler twice: once from the bpf program, and again from std via aya.
 cargo clippy --exclude test-ebpf --all-targets --workspace -- --deny warnings
 cargo clippy --package test-ebpf --all-targets -- --deny warnings
 popd

@@ -9,6 +9,10 @@ edition = "2021"
 aya-ebpf = { workspace = true }
 aya-log-ebpf = { workspace = true }
 
+[build-dependencies]
+which = { workspace = true }
+xtask = { path = "../xtask" }
+
 [[bin]]
 name = "{{ project-name }}"
 path = "src/main.rs"
