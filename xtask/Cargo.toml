@@ -4,5 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = { workspace = true }
+anyhow = { workspace = true, default-features = true }
 clap = { workspace = true, default-features = true, features = ["derive"] }
