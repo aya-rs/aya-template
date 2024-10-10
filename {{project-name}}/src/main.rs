@@ -8,43 +8,45 @@ use aya::{programs::FExit, Btf};
 {%- when "uprobe", "uretprobe" -%}
 use aya::programs::UProbe;
 {%- when "sock_ops" -%}
-use aya::programs::{SockOps, links::CgroupAttachMode};
+use aya::programs::{links::CgroupAttachMode, SockOps};
 {%- when "sk_msg" -%}
-use aya::maps::SockHash;
-use aya::programs::SkMsg;
+use aya::{maps::SockHash, programs::SkMsg};
 use {{crate_name}}_common::SockKey;
 {%- when "xdp" -%}
-use anyhow::Context;
+use anyhow::Context as _;
 use aya::programs::{Xdp, XdpFlags};
 {%- when "classifier" -%}
 use aya::programs::{tc, SchedClassifier, TcAttachType};
 {%- when "cgroup_skb" -%}
-use aya::programs::{CgroupSkb, CgroupSkbAttachType, links::CgroupAttachMode};
+use aya::programs::{links::CgroupAttachMode, CgroupSkb, CgroupSkbAttachType};
 {%- when "cgroup_sysctl" -%}
-use aya::programs::{CgroupSysctl, links::CgroupAttachMode};
+use aya::programs::{links::CgroupAttachMode, CgroupSysctl};
 {%- when "cgroup_sockopt" -%}
-use aya::programs::{CgroupSockopt, links::CgroupAttachMode};
+use aya::programs::{links::CgroupAttachMode, CgroupSockopt};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
 use aya::{programs::Lsm, Btf};
 {%- when "perf_event" -%}
-use aya::programs::{perf_event, PerfEvent};
-use aya::util::online_cpus;
+use aya::{
+    programs::{perf_event, PerfEvent},
+    util::online_cpus,
+};
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- when "socket_filter" -%}
 use std::net::TcpStream;
+
 use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
 {%- endcase %}
-use aya::{include_bytes_aligned, Ebpf};
-use aya_log::EbpfLogger;
 {% if program_types_with_opts contains program_type -%}
 use clap::Parser;
 {% endif -%}
-use log::{info, warn, debug};
+
+#[rustfmt::skip]
+use log::{debug, info, warn};
 use tokio::signal;
 
 {% if program_types_with_opts contains program_type -%}
@@ -85,15 +87,11 @@ async fn main() -> Result<(), anyhow::Error> {
     // runtime. This approach is recommended for most real-world use cases. If you would
     // like to specify the eBPF program at runtime rather than at compile-time, you can
     // reach for `Bpf::load_file` instead.
-    #[cfg(debug_assertions)]
-    let mut ebpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/debug/{{project-name}}"
-    ))?;
-    #[cfg(not(debug_assertions))]
-    let mut ebpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/release/{{project-name}}"
-    ))?;
-    if let Err(e) = EbpfLogger::init(&mut ebpf) {
+    let mut ebpf = aya::Ebpf::load(aya::include_bytes_aligned!(concat!(
+        env!("OUT_DIR"),
+        "/test"
+    )))?;
+    if let Err(e) = aya_log::EbpfLogger::init(&mut ebpf) {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
     }
@@ -122,7 +120,7 @@ async fn main() -> Result<(), anyhow::Error> {
     program.load()?;
     program.attach(cgroup, CgroupAttachMode::default())?;
     {%- when "sk_msg" -%}
-    let sock_map: SockHash::<_, SockKey> = ebpf.map("{{sock_map}}").unwrap().try_into()?;
+    let sock_map: SockHash<_, SockKey> = ebpf.map("{{sock_map}}").unwrap().try_into()?;
     let map_fd = sock_map.fd().try_clone()?;
 
     let prog: &mut SkMsg = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
@@ -145,7 +143,11 @@ async fn main() -> Result<(), anyhow::Error> {
     let program: &mut CgroupSkb = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
-    program.attach(cgroup, CgroupSkbAttachType::{{direction}}, CgroupAttachMode::default())?;
+    program.attach(
+        cgroup,
+        CgroupSkbAttachType::{{direction}},
+        CgroupAttachMode::default(),
+    )?;
     {%- when "tracepoint" -%}
     let program: &mut TracePoint = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
