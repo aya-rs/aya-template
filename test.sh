@@ -53,5 +53,6 @@ cargo generate --path "${TEMPLATE_DIR}" -n test -d program_type="${PROG_TYPE}" $
 pushd test
 cargo xtask build-ebpf
 cargo build
+cargo clippy --workspace --all-targets
 popd
 exit 0
