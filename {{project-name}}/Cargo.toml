@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 {{project-name}}-common = { path = "../{{project-name}}-common", features = ["user"] }
 
-anyhow = { workspace = true }
+anyhow = { workspace = true, default-features = true }
 aya = { workspace = true }
 aya-log = { workspace = true }
 env_logger = {workspace = true }

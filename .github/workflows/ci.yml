@@ -21,6 +21,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        rust:
+          - stable
+          - 1.80.1
         program:
           - kprobe
           - kretprobe
@@ -49,8 +52,9 @@ jobs:
         with:
           components: rust-src,rustfmt
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: ${{ matrix.rust }}
           components: clippy
 
       - uses: Swatinem/rust-cache@v2
