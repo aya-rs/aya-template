@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -eux
 
 TEMPLATE_DIR=$1
 if [ -z "${TEMPLATE_DIR}" ]; then echo "template dir required"; exit 1; fi
@@ -60,5 +60,12 @@ cargo build --package test --release
 # trying to compile the panic handler twice: once from the bpf program, and again from std via aya.
 cargo clippy --exclude test-ebpf --all-targets --workspace -- --deny warnings
 cargo clippy --package test-ebpf --all-targets -- --deny warnings
+
+expect << EOF
+  log_user 1
+  set pid [spawn cargo xtask run]
+  expect "Waiting for Ctrl-C..."
+  exec kill -SIGINT \$pid
+EOF
+
 popd
-exit 0
