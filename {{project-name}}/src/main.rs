@@ -50,7 +50,7 @@ use clap::Parser;
 {% endif -%}
 
 #[rustfmt::skip]
-use log::{debug, info, warn};
+use log::{debug, warn};
 use tokio::signal;
 
 {% if program_types_with_opts contains program_type -%}
@@ -205,9 +205,9 @@ async fn main() -> anyhow::Result<()> {
     program.attach("{{tracepoint_name}}")?;
     {%- endcase %}
 
-    info!("Waiting for Ctrl-C...");
+    println!("Waiting for Ctrl-C...");
     signal::ctrl_c().await?;
-    info!("Exiting...");
+    println!("Exiting...");
 
     Ok(())
 }
