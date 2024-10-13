@@ -35,8 +35,6 @@ use aya::{
 {%- when "tp_btf" -%}
 use aya::{programs::BtfTracePoint, Btf};
 {%- when "socket_filter" -%}
-use std::net::TcpStream;
-
 use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
 use aya::programs::RawTracePoint;
@@ -163,10 +161,10 @@ async fn main() -> anyhow::Result<()> {
     program.load("{{tracepoint_name}}", &btf)?;
     program.attach()?;
     {%- when "socket_filter" -%}
-    let client = TcpStream::connect("127.0.0.1:1234")?;
+    let listener = std::net::TcpListener::bind("localhost:0")?;
     let prog: &mut SocketFilter = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
-    prog.attach(client)?;
+    prog.attach(&listener)?;
     {%- when "cgroup_sysctl" -%}
     let program: &mut CgroupSysctl = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     let cgroup = std::fs::File::open(opt.cgroup_path)?;
