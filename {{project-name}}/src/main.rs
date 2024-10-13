@@ -2,12 +2,15 @@
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
 {%- when "fentry" -%}
+use anyhow::Context as _;
 use aya::{programs::FEntry, Btf};
 {%- when "fexit" -%}
+use anyhow::Context as _;
 use aya::{programs::FExit, Btf};
 {%- when "uprobe", "uretprobe" -%}
 use aya::programs::UProbe;
 {%- when "sock_ops" -%}
+use anyhow::Context as _;
 use aya::programs::{links::CgroupAttachMode, SockOps};
 {%- when "sk_msg" -%}
 use aya::{maps::SockHash, programs::SkMsg};
@@ -18,10 +21,13 @@ use aya::programs::{Xdp, XdpFlags};
 {%- when "classifier" -%}
 use aya::programs::{tc, SchedClassifier, TcAttachType};
 {%- when "cgroup_skb" -%}
+use anyhow::Context as _;
 use aya::programs::{links::CgroupAttachMode, CgroupSkb, CgroupSkbAttachType};
 {%- when "cgroup_sysctl" -%}
+use anyhow::Context as _;
 use aya::programs::{links::CgroupAttachMode, CgroupSysctl};
 {%- when "cgroup_sockopt" -%}
+use anyhow::Context as _;
 use aya::programs::{links::CgroupAttachMode, CgroupSockopt};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
@@ -100,12 +106,12 @@ async fn main() -> anyhow::Result<()> {
     program.load()?;
     program.attach("{{kprobe}}", 0)?;
     {%- when "fentry" %}
-    let btf = Btf::from_sys_fs()?;
+    let btf = Btf::from_sys_fs().context("BTF from sysfs")?;
     let program: &mut FEntry = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load("{{fn_name}}", &btf)?;
     program.attach()?;
     {%- when "fexit" %}
-    let btf = Btf::from_sys_fs()?;
+    let btf = Btf::from_sys_fs().context("BTF from sysfs")?;
     let program: &mut FExit = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load("{{fn_name}}", &btf)?;
     program.attach()?;
@@ -116,7 +122,8 @@ async fn main() -> anyhow::Result<()> {
     program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", pid)?;
     {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     let Opt { cgroup_path } = opt;
-    let cgroup = std::fs::File::open(&cgroup_path);
+    let cgroup =
+        std::fs::File::open(&cgroup_path).with_context(|| format!("{}", cgroup_path.display()))?;
     {%- if program_type == "sock_ops" %}
     let program: &mut SockOps = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
