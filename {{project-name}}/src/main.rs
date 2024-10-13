@@ -1,4 +1,4 @@
-{% case program_type -%}
+{%- case program_type -%}
 {%- when "kprobe", "kretprobe" -%}
 use aya::programs::KProbe;
 {%- when "fentry" -%}
@@ -50,16 +50,17 @@ use tokio::signal;
 {% if program_types_with_opts contains program_type -%}
 #[derive(Debug, Parser)]
 struct Opt {
-{%- if program_type == "xdp" or program_type == "classifier" %}
+{%- case program_type -%}
+{%- when "xdp", "classifier" %}
     #[clap(short, long, default_value = "eth0")]
     iface: String,
-{% elsif program_type == "sock_ops" or program_type == "cgroup_skb" or program_type == "cgroup_sysctl" or program_type == "cgroup_sockopt" %}
+{%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
-    cgroup_path: String,
-{% elsif program_type == "uprobe" or program_type == "uretprobe" %}
+    cgroup_path: std::path::PathBuf,
+{%- when "uprobe", "uretprobe" %}
     #[clap(short, long)]
     pid: Option<i32>,
-{% endif -%}
+{%- endcase %}
 }
 
 {% endif -%}
@@ -93,89 +94,91 @@ async fn main() -> anyhow::Result<()> {
         // This can happen if you remove all log statements from your eBPF program.
         warn!("failed to initialize eBPF logger: {}", e);
     }
-    {% case program_type -%}
-    {%- when "kprobe", "kretprobe" -%}
+    {%- case program_type -%}
+    {%- when "kprobe", "kretprobe" %}
     let program: &mut KProbe = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{kprobe}}", 0)?;
-    {%- when "fentry" -%}
+    {%- when "fentry" %}
     let btf = Btf::from_sys_fs()?;
     let program: &mut FEntry = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load("{{fn_name}}", &btf)?;
     program.attach()?;
-    {%- when "fexit" -%}
+    {%- when "fexit" %}
     let btf = Btf::from_sys_fs()?;
     let program: &mut FExit = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load("{{fn_name}}", &btf)?;
     program.attach()?;
-    {%- when "uprobe", "uretprobe" -%}
+    {%- when "uprobe", "uretprobe" %}
+    let Opt { pid } = opt;
     let program: &mut UProbe = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", opt.pid)?;
-    {%- when "sock_ops" -%}
+    program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", pid)?;
+    {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
+    let Opt { cgroup_path } = opt;
+    let cgroup = std::fs::File::open(&cgroup_path);
+    {%- if program_type == "sock_ops" %}
     let program: &mut SockOps = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(cgroup, CgroupAttachMode::default())?;
-    {%- when "sk_msg" -%}
-    let sock_map: SockHash<_, SockKey> = ebpf.map("{{sock_map}}").unwrap().try_into()?;
-    let map_fd = sock_map.fd().try_clone()?;
-
-    let prog: &mut SkMsg = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    prog.load()?;
-    prog.attach(&map_fd)?;
-    // insert sockets to the map using sock_map.insert here, or from a sock_ops program
-    {%- when "xdp" -%}
-    let program: &mut Xdp = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    program.load()?;
-    program.attach(&opt.iface, XdpFlags::default())
-        .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
-    {%- when "classifier" -%}
-    // error adding clsact to the interface if it is already added is harmless
-    // the full cleanup can be done with 'sudo tc qdisc del dev eth0 clsact'.
-    let _ = tc::qdisc_add_clsact(&opt.iface);
-    let program: &mut SchedClassifier = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    program.load()?;
-    program.attach(&opt.iface, TcAttachType::{{direction}})?;
-    {%- when "cgroup_skb" -%}
+    {%- elsif program_type == "cgroup_skb" %}
     let program: &mut CgroupSkb = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    let cgroup = std::fs::File::open(opt.cgroup_path)?;
     program.load()?;
     program.attach(
         cgroup,
         CgroupSkbAttachType::{{direction}},
         CgroupAttachMode::default(),
     )?;
-    {%- when "tracepoint" -%}
+    {%- elsif program_type == "cgroup_sysctl" %}
+    let program: &mut CgroupSysctl = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    program.attach(cgroup, CgroupAttachMode::default())?;
+    {%- elsif program_type == "cgroup_sockopt" %}
+    let program: &mut CgroupSockopt = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    program.attach(cgroup, CgroupAttachMode::default())?;
+    {%- endif -%}
+    {%- when "sk_msg" %}
+    let sock_map: SockHash<_, SockKey> = ebpf.map("{{sock_map}}").unwrap().try_into()?;
+    let map_fd = sock_map.fd().try_clone()?;
+    let prog: &mut SkMsg = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    prog.load()?;
+    prog.attach(&map_fd)?;
+    // insert sockets to the map using sock_map.insert here, or from a sock_ops program
+    {%- when "xdp" %}
+    let Opt { iface } = opt;
+    let program: &mut Xdp = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    program.attach(&iface, XdpFlags::default())
+        .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
+    {%- when "classifier" %}
+    let Opt { iface } = opt;
+    // error adding clsact to the interface if it is already added is harmless
+    // the full cleanup can be done with 'sudo tc qdisc del dev eth0 clsact'.
+    let _ = tc::qdisc_add_clsact(&iface);
+    let program: &mut SchedClassifier = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
+    program.load()?;
+    program.attach(&iface, TcAttachType::{{direction}})?;
+    {%- when "tracepoint" %}
     let program: &mut TracePoint = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{tracepoint_category}}", "{{tracepoint_name}}")?;
-    {%- when "lsm" -%}
+    {%- when "lsm" %}
     let btf = Btf::from_sys_fs()?;
     let program: &mut Lsm = ebpf.program_mut("{{lsm_hook}}").unwrap().try_into()?;
     program.load("{{lsm_hook}}", &btf)?;
     program.attach()?;
-    {%- when "tp_btf" -%}
+    {%- when "tp_btf" %}
     let btf = Btf::from_sys_fs()?;
     let program: &mut BtfTracePoint = ebpf.program_mut("{{tracepoint_name}}").unwrap().try_into()?;
     program.load("{{tracepoint_name}}", &btf)?;
     program.attach()?;
-    {%- when "socket_filter" -%}
+    {%- when "socket_filter" %}
     let listener = std::net::TcpListener::bind("localhost:0")?;
     let prog: &mut SocketFilter = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     prog.load()?;
     prog.attach(&listener)?;
-    {%- when "cgroup_sysctl" -%}
-    let program: &mut CgroupSysctl = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    let cgroup = std::fs::File::open(opt.cgroup_path)?;
-    program.load()?;
-    program.attach(cgroup, CgroupAttachMode::default())?;
-    {%- when "cgroup_sockopt" -%}
-    let program: &mut CgroupSockopt = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
-    let cgroup = std::fs::File::open(opt.cgroup_path)?;
-    program.load()?;
-    program.attach(cgroup, CgroupAttachMode::default())?;
-    {%- when "perf_event" -%}
+    {%- when "perf_event" %}
     // This will raise scheduled events on each CPU at 1 HZ, triggered by the kernel based
     // on clock ticks.
     let program: &mut PerfEvent = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
@@ -189,7 +192,7 @@ async fn main() -> anyhow::Result<()> {
             true,
         )?;
     }
-    {%- when "raw_tracepoint" -%}
+    {%- when "raw_tracepoint" %}
     let program: &mut RawTracePoint = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
     program.attach("{{tracepoint_name}}")?;
