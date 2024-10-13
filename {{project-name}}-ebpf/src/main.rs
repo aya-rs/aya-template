@@ -14,7 +14,7 @@ pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
 }
 
 fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
-    info!(&ctx, "function {{kprobe}} called");
+    info!(&ctx, "kprobe called");
     Ok(0)
 }
 {%- when "kretprobe" %}
@@ -30,7 +30,7 @@ pub fn {{crate_name}}(ctx: RetProbeContext) -> u32 {
 }
 
 fn try_{{crate_name}}(ctx: RetProbeContext) -> Result<u32, u32> {
-    info!(&ctx, "function {{kprobe}} called");
+    info!(&ctx, "kretprobe called");
     Ok(0)
 }
 {%- when "fentry" %}
