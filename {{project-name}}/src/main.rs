@@ -61,7 +61,7 @@ struct Opt {
     #[clap(short, long, default_value = "eth0")]
     iface: String,
 {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
-    #[clap(short, long, default_value = "/sys/fs/cgroup/unified")]
+    #[clap(short, long, default_value = "/sys/fs/cgroup")]
     cgroup_path: std::path::PathBuf,
 {%- when "uprobe", "uretprobe" %}
     #[clap(short, long)]
