@@ -14,7 +14,7 @@ if [ -z "${PROG_TYPE}" ]; then
 fi
 CRATE_NAME=aya-test-crate
 
-case "${PROG_TYPE}" in
+case ${PROG_TYPE} in
 "cgroup_sockopt")
   ADDITIONAL_ARGS=(-d sockopt_target=getsockopt)
   ;;
@@ -61,35 +61,53 @@ pushd "${TMP_DIR}"
 cargo generate --path "${TEMPLATE_DIR}" -n "${CRATE_NAME}" -d program_type="${PROG_TYPE}" "${ADDITIONAL_ARGS[@]}"
 pushd "${CRATE_NAME}"
 
-cargo +nightly fmt --all -- --check
-cargo build --package "${CRATE_NAME}"
-cargo build --package "${CRATE_NAME}" --release
-# We cannot run clippy over the whole workspace at once due to feature unification. Since both
-# ${CRATE_NAME} and ${CRATE_NAME}-ebpf depend on ${CRATE_NAME}-common and ${CRATE_NAME} activates
-# ${CRATE_NAME}-common's aya dependency, we end up trying to compile the panic handler twice: once
-# from the bpf program, and again from std via aya.
-cargo clippy --exclude "${CRATE_NAME}-ebpf" --all-targets --workspace -- --deny warnings
-cargo clippy --package "${CRATE_NAME}-ebpf" --all-targets -- --deny warnings
+OS=$(uname)
+case $OS in
+"Darwin")
+  ARCH=$(uname -m)
+  if [[ "$ARCH" == "arm64" ]]; then
+    ARCH="aarch64"
+  fi
+  AYA_BUILD_EBPF=true CC=${ARCH}-linux-musl-gcc cargo build --package "${CRATE_NAME}" --release \
+    --target="${ARCH}"-unknown-linux-musl \
+    --config=target."${ARCH}"-unknown-linux-musl.linker=\""${ARCH}"-linux-musl-gcc\"
+  ;;
+"Linux")
+  cargo +nightly fmt --all -- --check
+  cargo build --package "${CRATE_NAME}"
+  cargo build --package "${CRATE_NAME}" --release
+  # We cannot run clippy over the whole workspace at once due to feature unification. Since both
+  # ${CRATE_NAME} and ${CRATE_NAME}-ebpf depend on ${CRATE_NAME}-common and ${CRATE_NAME} activates
+  # ${CRATE_NAME}-common's aya dependency, we end up trying to compile the panic handler twice: once
+  # from the bpf program, and again from std via aya.
+  cargo clippy --exclude "${CRATE_NAME}-ebpf" --all-targets --workspace -- --deny warnings
+  cargo clippy --package "${CRATE_NAME}-ebpf" --all-targets -- --deny warnings
 
-expect <<EOF
-  set timeout 30        ;# Increase timeout if necessary
-  spawn cargo xtask run
-  expect {
-    -re "Waiting for Ctrl-C.*" {
-      send -- \003      ;# Send Ctrl-C
+  expect <<EOF
+    set timeout 30        ;# Increase timeout if necessary
+    spawn cargo xtask run
+    expect {
+      -re "Waiting for Ctrl-C.*" {
+        send -- \003      ;# Send Ctrl-C
+      }
+      timeout {
+        puts "Error: Timed out waiting for 'Waiting for Ctrl-C...'"
+        exit 1
+      }
+      eof {
+        puts "Error: Process exited prematurely"
+        exit 1
+      }
     }
-    timeout {
-      puts "Error: Timed out waiting for 'Waiting for Ctrl-C...'"
-      exit 1
-    }
-    eof {
-      puts "Error: Process exited prematurely"
-      exit 1
-    }
-  }
 
-  expect {
-    -re "Exiting.*" { }
-    eof { }
-  }
+    expect {
+      -re "Exiting.*" { }
+      eof { }
+    }
 EOF
+  ;;
+*)
+  echo "Unsupported OS: ${OS}"
+  exit 1
+  ;;
+esac
