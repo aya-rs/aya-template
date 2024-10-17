@@ -21,11 +21,12 @@ experience; this compromise necessitates the use of `xtask` to actually build th
 
 Cross compilation should work on both Intel and Apple Silicon Macs.
 
-```bash
+```shell
 AYA_BUILD_EBPF=true \
 CC=${ARCH}-linux-musl-gcc \
-RUSTFLAGS="-C linker=${ARCH}-linux-musl-gcc" \
-  cargo build --package {{project-name}} --release --target=${ARCH}-unknown-linux-musl
+  cargo build --package {{project-name}} --release \
+  --target=${ARCH}-unknown-linux-musl \
+  --config=target.${ARCH}-unknown-linux-musl.linker=\"${ARCH}-linux-musl-gcc\"
 ```
 The cross-compiled program `target/${ARCH}-unknown-linux-musl/release/{{project-name}}` can be
 copied to a Linux server or VM and run there.
