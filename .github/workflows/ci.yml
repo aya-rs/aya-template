@@ -21,12 +21,14 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - macos-13 # x86
+          - macos-latest # arm64
+          - ubuntu-latest # x86
         rust:
-          - stable
           - 1.80.1
         program:
           - kprobe
@@ -48,6 +50,7 @@ jobs:
           - raw_tracepoint
           - tp_btf
           - tracepoint
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - uses: actions/checkout@v4
@@ -67,6 +70,4 @@ jobs:
         with:
           tool: bpf-linker,cargo-generate
 
-      - run: sudo apt update
-      - run: sudo apt install expect
-      - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
+      - run: ./test.py ${{ github.workspace }} ${{ matrix.program }}

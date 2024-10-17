@@ -1,6 +1,6 @@
 [template]
 cargo_generate_version = ">=0.10.0"
-ignore = [".github", "test.sh"]
+ignore = [".github", "test.py"]
 
 [placeholders.program_type]
 type = "string"
