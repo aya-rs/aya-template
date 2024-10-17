@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = { workspace = true, default-features = true }
 aya = { workspace = true }
 aya-log = { workspace = true }
-env_logger = {workspace = true }
+env_logger = { workspace = true }
 libc = { workspace = true }
 log = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
@@ -33,7 +33,7 @@ cargo_metadata = { workspace = true }
 # workflows with stable cargo; stable cargo outright refuses to load manifests that use unstable
 # features.
 {{project-name}}-ebpf = { path = "../{{project-name}}-ebpf" }
-xtask = { path = "../xtask"}
+xtask = { path = "../xtask" }
 
 [[bin]]
 name = "{{project-name}}"
