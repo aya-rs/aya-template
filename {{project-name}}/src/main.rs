@@ -205,8 +205,9 @@ async fn main() -> anyhow::Result<()> {
     program.attach("{{tracepoint_name}}")?;
     {%- endcase %}
 
+    let ctrl_c = signal::ctrl_c();
     println!("Waiting for Ctrl-C...");
-    signal::ctrl_c().await?;
+    ctrl_c.await?;
     println!("Exiting...");
 
     Ok(())
