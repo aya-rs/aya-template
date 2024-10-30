@@ -68,9 +68,10 @@ case $OS in
   if [[ "$ARCH" == "arm64" ]]; then
     ARCH="aarch64"
   fi
-  AYA_BUILD_EBPF=true CC=${ARCH}-linux-musl-gcc cargo build --package "${CRATE_NAME}" --release \
-    --target="${ARCH}"-unknown-linux-musl \
-    --config=target."${ARCH}"-unknown-linux-musl.linker=\""${ARCH}"-linux-musl-gcc\"
+  TARGET=${ARCH}-unknown-linux-musl
+  CC=${ARCH}-linux-musl-gcc cargo build --package "${CRATE_NAME}" --release \
+    --target="${TARGET}" \
+    --config=target."${TARGET}".linker=\""${ARCH}"-linux-musl-gcc\"
   ;;
 "Linux")
   cargo +nightly fmt --all -- --check
@@ -85,7 +86,7 @@ case $OS in
 
   expect <<EOF
     set timeout 30        ;# Increase timeout if necessary
-    spawn cargo xtask run
+    spawn cargo run --release --config "target.\"cfg(all())\".runner=\"sudo -E\""
     expect {
       -re "Waiting for Ctrl-C.*" {
         send -- \003      ;# Send Ctrl-C
