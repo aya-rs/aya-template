@@ -33,7 +33,6 @@ cargo_metadata = { workspace = true }
 # workflows with stable cargo; stable cargo outright refuses to load manifests that use unstable
 # features.
 {{project-name}}-ebpf = { path = "../{{project-name}}-ebpf" }
-xtask = { path = "../xtask" }
 
 [[bin]]
 name = "{{project-name}}"
