@@ -81,8 +81,18 @@ case $OS in
   # ${CRATE_NAME} and ${CRATE_NAME}-ebpf depend on ${CRATE_NAME}-common and ${CRATE_NAME} activates
   # ${CRATE_NAME}-common's aya dependency, we end up trying to compile the panic handler twice: once
   # from the bpf program, and again from std via aya.
-  cargo clippy --exclude "${CRATE_NAME}-ebpf" --all-targets --workspace -- --deny warnings
-  cargo clippy --package "${CRATE_NAME}-ebpf" --all-targets -- --deny warnings
+  #
+  # `-C panic=abort` because "unwinding panics are not supported without std";
+  # integration-ebpf contains `#[no_std]` binaries.
+  #
+  # `-Zpanic_abort_tests` because "building tests with panic=abort is not supported without
+  # `-Zpanic_abort_tests`"; Cargo does this automatically when panic=abort is set via profile
+  # but we want to preserve unwinding at runtime - here we are just running clippy so we don't
+  # care about unwinding behavior.
+  #
+  # `+nightly` because "the option `Z` is only accepted on the nightly compiler".
+  cargo +nightly clippy --exclude "${CRATE_NAME}-ebpf" --all-targets --workspace -- --deny warnings
+  cargo +nightly clippy --package "${CRATE_NAME}-ebpf" --all-targets -- --deny warnings -C panic=abort -Zpanic_abort_tests
 
   expect <<EOF
     set timeout 30        ;# Increase timeout if necessary
