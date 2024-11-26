@@ -60,8 +60,6 @@ fn main() {
         let mut cmd = Command::new("cargo");
         cmd.args([
             "build",
-            "-Z",
-            "build-std=core",
             "--bins",
             "--message-format=json",
             "--release",
