@@ -77,12 +77,23 @@ case $OS in
   cargo +nightly fmt --all -- --check
   cargo build --package "${CRATE_NAME}"
   cargo build --package "${CRATE_NAME}" --release
-  # We cannot run clippy over the whole workspace at once due to feature unification. Since both
-  # ${CRATE_NAME} and ${CRATE_NAME}-ebpf depend on ${CRATE_NAME}-common and ${CRATE_NAME} activates
-  # ${CRATE_NAME}-common's aya dependency, we end up trying to compile the panic handler twice: once
-  # from the bpf program, and again from std via aya.
+  # Running clippy over ${CRATE_NAME}-ebpf *from the workspace root* produces:
+  #
+  # error: unwinding panics are not supported without std
+  #
+  # Running clippy over ${CRATE_NAME}-ebpf with `--all-targets` produces:
+  #
+  # error[E0463]: can't find crate for `test`
+  #
+  # Both of these make sense; the former is using the host toolchain's unwinding std on a no_std
+  # binary, and the latter is trying to link libtest which isn't present in a core-only std.
+  #
+  # These concerns aside, we also cannot run clippy over the whole workspace at once due to feature
+  # unification. Since both ${CRATE_NAME} and ${CRATE_NAME}-ebpf depend on ${CRATE_NAME}-common and
+  # ${CRATE_NAME} activates ${CRATE_NAME}-common's aya dependency, we end up trying to compile the
+  # panic handler twice: once from the bpf program, and again from std via aya.
   cargo clippy --exclude "${CRATE_NAME}-ebpf" --all-targets --workspace -- --deny warnings
-  cargo clippy --package "${CRATE_NAME}-ebpf" --all-targets -- --deny warnings
+  cargo -Z unstable-options -C "${CRATE_NAME}-ebpf" hack clippy --feature-powerset -- --deny warnings
 
   expect <<EOF
     set timeout 30        ;# Increase timeout if necessary
