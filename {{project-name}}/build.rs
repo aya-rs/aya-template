@@ -59,6 +59,7 @@ fn main() {
 
         let mut cmd = Command::new("cargo");
         cmd.args([
+            "+nightly",
             "build",
             "-Z",
             "build-std=core",
@@ -71,8 +72,8 @@ fn main() {
 
         cmd.env("CARGO_CFG_BPF_TARGET_ARCH", arch);
 
-        // Workaround to make sure that the rust-toolchain.toml is respected.
-        for key in ["RUSTUP_TOOLCHAIN", "RUSTC", "RUSTC_WORKSPACE_WRAPPER"] {
+        // Workaround to make sure that the correct toolchain is used.
+        for key in ["RUSTC", "RUSTC_WORKSPACE_WRAPPER"] {
             cmd.env_remove(key);
         }
         cmd.current_dir(ebpf_dir);
