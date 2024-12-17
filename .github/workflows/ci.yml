@@ -26,8 +26,6 @@ jobs:
       matrix:
         runner:
           - ubuntu-latest # x86
-        rust:
-          - 1.80.1
         program:
           - kprobe
           - kretprobe
@@ -50,10 +48,8 @@ jobs:
           - tracepoint
         include:
           - runner: macos-13 # x86
-            rust: 1.80.1
             program: kprobe
           - runner: macos-14 # arm64
-            rust: 1.80.1
             program: kprobe
 
     runs-on: ${{ matrix.runner }}
@@ -65,22 +61,18 @@ jobs:
         with:
           components: clippy,rust-src,rustfmt
 
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         if: runner.os == 'macOS' && runner.arch == 'X64'
         with:
-          toolchain: ${{ matrix.rust }}
           targets: x86_64-unknown-linux-musl
 
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         if: runner.os == 'macOS' && runner.arch == 'ARM64'
         with:
-          toolchain: ${{ matrix.rust }}
           targets: aarch64-unknown-linux-musl
 
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         if: runner.os == 'Linux'
-        with:
-          toolchain: ${{ matrix.rust }}
 
       - uses: Swatinem/rust-cache@v2
 
