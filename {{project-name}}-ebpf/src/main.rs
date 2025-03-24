@@ -319,7 +319,7 @@ fn try_{{crate_name}}(ctx: PerfEventContext) -> Result<u32, u32> {
 }
 {%- endcase %}
 
-#[cfg(not(test))]
+#[cfg(target_arch = "bpf")]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
