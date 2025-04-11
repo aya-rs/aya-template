@@ -3,6 +3,8 @@ name = "{{project-name}}"
 version = "0.1.0"
 edition = "2021"
 
+license.workspace = true
+
 [dependencies]
 {{project-name}}-common = { path = "../{{project-name}}-common", features = ["user"] }
 
@@ -12,8 +14,13 @@ aya-log = { workspace = true }
 env_logger = { workspace = true }
 libc = { workspace = true }
 log = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "net", "signal"] }
-
+tokio = { workspace = true, features = [
+    "macros",
+    "rt",
+    "rt-multi-thread",
+    "net",
+    "signal",
+] }
 {% if program_types_with_opts contains program_type -%}
 clap = { workspace = true, features = ["derive"] }
 {% endif -%}
