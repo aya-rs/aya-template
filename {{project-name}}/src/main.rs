@@ -85,7 +85,7 @@ async fn main() -> anyhow::Result<()> {
     };
     let ret = unsafe { libc::setrlimit(libc::RLIMIT_MEMLOCK, &rlim) };
     if ret != 0 {
-        debug!("remove limit on locked memory failed, ret is: {}", ret);
+        debug!("remove limit on locked memory failed, ret is: {ret}");
     }
 
     // This will include your eBPF object file as raw bytes at compile-time and load it at
@@ -98,7 +98,7 @@ async fn main() -> anyhow::Result<()> {
     )))?;
     if let Err(e) = aya_log::EbpfLogger::init(&mut ebpf) {
         // This can happen if you remove all log statements from your eBPF program.
-        warn!("failed to initialize eBPF logger: {}", e);
+        warn!("failed to initialize eBPF logger: {e}");
     }
     {%- case program_type -%}
     {%- when "kprobe", "kretprobe" %}
