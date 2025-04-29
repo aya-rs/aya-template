@@ -13,5 +13,5 @@ aya-log-ebpf = { workspace = true }
 which = { workspace = true }
 
 [[bin]]
-name = "{{ project-name }}"
+name = "{{ project-name }}_ebpf"
 path = "src/main.rs"
