@@ -116,6 +116,9 @@ case $OS in
       eof { }
     }
 EOF
+
+  # Check if documentation can be generated for both the userspace and eBPF side at the same time
+  cargo doc --workspace
   ;;
 *)
   echo "Unsupported OS: ${OS}"
