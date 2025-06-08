@@ -67,7 +67,7 @@ regex = "^[a-z_]+$"
 [conditional.'program_type == "tracepoint" || program_type == "tp_btf" || program_type == "raw_tracepoint"'.placeholders.tracepoint_name]
 type = "string"
 prompt = "Which tracepoint name? (e.g sched_switch, net_dev_queue)"
-regex = "^[a-z_]+$"
+regex = "^[a-z_:]+$"
 
 [conditional.'program_type == "lsm"'.placeholders.lsm_hook]
 type = "string"
