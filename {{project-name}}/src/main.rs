@@ -28,7 +28,7 @@ use anyhow::Context as _;
 use aya::programs::{links::CgroupAttachMode, CgroupSysctl};
 {%- when "cgroup_sockopt" -%}
 use anyhow::Context as _;
-use aya::programs::{links::CgroupAttachMode, CgroupSockopt};
+use aya::programs::{CgroupSockopt, links::CgroupAttachMode};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
