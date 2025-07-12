@@ -9,6 +9,7 @@ default-members = ["{{project-name}}", "{{project-name}}-common"]
 
 [workspace.package]
 license = "MIT OR Apache-2.0"
+edition = "2024"
 
 [workspace.dependencies]
 aya = { version = "0.13.1", default-features = false }

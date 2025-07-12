@@ -290,7 +290,7 @@ fn try_{{crate_name}}(ctx: RawTracePointContext) -> Result<i32, i32> {
 }
 {%- when "perf_event" %}
 use aya_ebpf::{
-    helpers::bpf_get_smp_processor_id, macros::perf_event, programs::PerfEventContext, EbpfContext,
+    EbpfContext, helpers::bpf_get_smp_processor_id, macros::perf_event, programs::PerfEventContext,
 };
 use aya_log_ebpf::info;
 
@@ -325,6 +325,6 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
-#[link_section = "license"]
-#[no_mangle]
+#[unsafe(link_section = "license")]
+#[unsafe(no_mangle)]
 static LICENSE: [u8; 13] = *b"Dual MIT/GPL\0";

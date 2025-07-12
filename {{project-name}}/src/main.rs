@@ -3,15 +3,15 @@
 use aya::programs::KProbe;
 {%- when "fentry" -%}
 use anyhow::Context as _;
-use aya::{programs::FEntry, Btf};
+use aya::{Btf, programs::FEntry};
 {%- when "fexit" -%}
 use anyhow::Context as _;
-use aya::{programs::FExit, Btf};
+use aya::{Btf, programs::FExit};
 {%- when "uprobe", "uretprobe" -%}
 use aya::programs::UProbe;
 {%- when "sock_ops" -%}
 use anyhow::Context as _;
-use aya::programs::{links::CgroupAttachMode, SockOps};
+use aya::programs::{SockOps, links::CgroupAttachMode};
 {%- when "sk_msg" -%}
 use aya::{maps::SockHash, programs::SkMsg};
 use {{crate_name}}_common::SockKey;
@@ -19,27 +19,27 @@ use {{crate_name}}_common::SockKey;
 use anyhow::Context as _;
 use aya::programs::{Xdp, XdpFlags};
 {%- when "classifier" -%}
-use aya::programs::{tc, SchedClassifier, TcAttachType};
+use aya::programs::{SchedClassifier, TcAttachType, tc};
 {%- when "cgroup_skb" -%}
 use anyhow::Context as _;
-use aya::programs::{links::CgroupAttachMode, CgroupSkb, CgroupSkbAttachType};
+use aya::programs::{CgroupSkb, CgroupSkbAttachType, links::CgroupAttachMode};
 {%- when "cgroup_sysctl" -%}
 use anyhow::Context as _;
-use aya::programs::{links::CgroupAttachMode, CgroupSysctl};
+use aya::programs::{CgroupSysctl, links::CgroupAttachMode};
 {%- when "cgroup_sockopt" -%}
 use anyhow::Context as _;
-use aya::programs::{links::CgroupAttachMode, CgroupSockopt};
+use aya::programs::{CgroupSockopt, links::CgroupAttachMode};
 {%- when "tracepoint" -%}
 use aya::programs::TracePoint;
 {%- when "lsm" -%}
-use aya::{programs::Lsm, Btf};
+use aya::{Btf, programs::Lsm};
 {%- when "perf_event" -%}
 use aya::{
-    programs::{perf_event, PerfEvent},
+    programs::{PerfEvent, perf_event},
     util::online_cpus,
 };
 {%- when "tp_btf" -%}
-use aya::{programs::BtfTracePoint, Btf};
+use aya::{Btf, programs::BtfTracePoint};
 {%- when "socket_filter" -%}
 use aya::programs::SocketFilter;
 {%- when "raw_tracepoint" -%}
