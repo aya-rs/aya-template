@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Context as _};
-use aya_build::cargo_metadata;
+use aya_build::{cargo_metadata, Toolchain};
 
 fn main() -> anyhow::Result<()> {
     let cargo_metadata::Metadata { packages, .. } = cargo_metadata::MetadataCommand::new()
@@ -8,7 +8,7 @@ fn main() -> anyhow::Result<()> {
         .context("MetadataCommand::exec")?;
     let ebpf_package = packages
         .into_iter()
-        .find(|cargo_metadata::Package { name, .. }| name == "{{project-name}}-ebpf")
+        .find(|cargo_metadata::Package { name, .. }| name.as_str() == "aya-test-crate-ebpf")
         .ok_or_else(|| anyhow!("{{project-name}}-ebpf package not found"))?;
-    aya_build::build_ebpf([ebpf_package])
+    aya_build::build_ebpf([ebpf_package], Toolchain::default())
 }
