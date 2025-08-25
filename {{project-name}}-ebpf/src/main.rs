@@ -183,7 +183,7 @@ pub fn {{crate_name}}(ctx: SkBuffContext) -> i32 {
 
 fn try_{{crate_name}}(ctx: SkBuffContext) -> Result<i32, i32> {
     info!(&ctx, "received a packet");
-    Ok(0)
+    Ok(1)
 }
 {%- when "tracepoint" %}
 use aya_ebpf::{macros::tracepoint, programs::TracePointContext};
