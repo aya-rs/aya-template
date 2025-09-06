@@ -15,3 +15,10 @@ which = { workspace = true }
 [[bin]]
 name = "{{ project-name }}_ebpf"
 path = "src/main.rs"
+
+# Tip: if you want to get aya-ebpf documentation in your crate docs, try
+# running `cargo doc --all`. This block makes cargo doc skip the dummy library
+# (see {{ project-name }}/Cargo.toml for more details)
+[lib]
+name = "{{ project-name | snake_case }}_ebpf_dummy"
+doc = false
