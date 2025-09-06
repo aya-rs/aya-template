@@ -83,7 +83,7 @@ jobs:
       - run: brew update && brew install filosottile/musl-cross/musl-cross llvm
         if: runner.os == 'macos'
 
-      - run: cargo install bpf-linker --git https://github.com/aya-rs/bpf-linker.git --no-default-features
+      - run: cargo install bpf-linker --git https://github.com/aya-rs/bpf-linker.git --no-default-features --features llvm-21
         if: runner.os == 'macos'
 
       - run: cargo install bpf-linker --git https://github.com/aya-rs/bpf-linker.git
