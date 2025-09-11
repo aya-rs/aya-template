@@ -58,7 +58,7 @@ use tokio::signal;
 struct Opt {
 {%- case program_type -%}
 {%- when "xdp", "classifier" %}
-    #[clap(short, long, default_value = "eth0")]
+    #[clap(short, long, default_value = "{{iface_name}}")]
     iface: String,
 {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     #[clap(short, long, default_value = "/sys/fs/cgroup")]
