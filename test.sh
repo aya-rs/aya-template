@@ -18,8 +18,14 @@ case ${PROG_TYPE} in
 "cgroup_sockopt")
   ADDITIONAL_ARGS=(-d sockopt_target=getsockopt)
   ;;
-"classifier" | "cgroup_skb")
+"cgroup_skb")
   ADDITIONAL_ARGS=(-d direction=Ingress)
+  ;;
+"classifier")
+  ADDITIONAL_ARGS=(-d direction=Ingress -d default_iface_name=eth0)
+  ;;
+"xdp")
+  ADDITIONAL_ARGS=(-d default_iface_name=eth0)
   ;;
 "fentry" | "fexit")
   ADDITIONAL_ARGS=(-d fn_name=try_to_wake_up)

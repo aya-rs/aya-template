@@ -28,6 +28,10 @@ choices = [
 ]
 default = "xdp"
 
+[conditional.'program_type == "classifier" || program_type == "xdp"'.placeholders.default_iface_name]
+type = "string"
+prompt = "Which interface to attach to by default? (e.g eth0)"
+
 [conditional.'program_type == "kprobe" || program_type == "kretprobe"'.placeholders.kprobe]
 type = "string"
 prompt = "Where to attach the (k|kret)probe? (e.g try_to_wake_up)"
