@@ -47,9 +47,9 @@ jobs:
           - tp_btf
           - tracepoint
         include:
-          - runner: macos-13 # x86
+          - runner: macos-15-intel # x86
             program: kprobe
-          - runner: macos-14 # arm64
+          - runner: macos-15 # arm64
             program: kprobe
 
     runs-on: ${{ matrix.runner }}
