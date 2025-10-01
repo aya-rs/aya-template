@@ -58,7 +58,7 @@ use tokio::signal;
 struct Opt {
 {%- case program_type -%}
 {%- when "xdp", "classifier" %}
-    #[clap(short, long, default_value = "eth0")]
+    #[clap(short, long, default_value = "{{default_iface}}")]
     iface: String,
 {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     #[clap(short, long, default_value = "/sys/fs/cgroup")]
@@ -96,9 +96,22 @@ async fn main() -> anyhow::Result<()> {
         env!("OUT_DIR"),
         "/{{project-name}}"
     )))?;
-    if let Err(e) = aya_log::EbpfLogger::init(&mut ebpf) {
-        // This can happen if you remove all log statements from your eBPF program.
-        warn!("failed to initialize eBPF logger: {e}");
+    match aya_log::EbpfLogger::init(&mut ebpf) {
+        Err(e) => {
+            // This can happen if you remove all log statements from your eBPF program.
+            warn!("failed to initialize eBPF logger: {e}");
+        }
+        Ok(logger) => {
+            let mut logger =
+                tokio::io::unix::AsyncFd::with_interest(logger, tokio::io::Interest::READABLE)?;
+            tokio::task::spawn(async move {
+                loop {
+                    let mut guard = logger.readable_mut().await.unwrap();
+                    guard.get_inner_mut().flush();
+                    guard.clear_ready();
+                }
+            });
+        }
     }
     {%- case program_type -%}
     {%- when "kprobe", "kretprobe" %}
@@ -119,7 +132,7 @@ async fn main() -> anyhow::Result<()> {
     let Opt { pid } = opt;
     let program: &mut UProbe = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(Some("{{uprobe_fn_name}}"), 0, "{{uprobe_target}}", pid)?;
+    program.attach("{{uprobe_fn_name}}", "{{uprobe_target}}", pid, None /* cookie */)?;
     {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     let Opt { cgroup_path } = opt;
     let cgroup =
