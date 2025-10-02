@@ -102,7 +102,7 @@ case $OS in
 
   expect <<EOF
     set timeout 30        ;# Increase timeout if necessary
-    spawn cargo run --release --config "target.\"cfg(all())\".runner=\"sudo -E\""
+    spawn cargo run --release
     expect {
       -re "Waiting for Ctrl-C.*" {
         send -- \003      ;# Send Ctrl-C
