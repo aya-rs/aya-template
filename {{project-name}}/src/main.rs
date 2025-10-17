@@ -205,8 +205,7 @@ async fn main() -> anyhow::Result<()> {
     program.load()?;
     for cpu in online_cpus().map_err(|(_, error)| error)? {
         program.attach(
-            perf_event::PerfTypeId::Software,
-            perf_event::perf_sw_ids::PERF_COUNT_SW_CPU_CLOCK as u64,
+            perf_event::PerfEventConfig::Software(perf_event::SoftwareEvent::CpuClock),
             perf_event::PerfEventScope::AllProcessesOneCpu { cpu },
             perf_event::SamplePolicy::Frequency(1),
             true,
