@@ -23,11 +23,12 @@ const progName = "{{crate_name}}"
 var ebpfBytes []byte
 
 func main() {
-        if len(os.Args) < 2 {
-                fmt.Printf("Usage: %s <interface>\n", os.Args[0])
-                os.Exit(1)
+        defaultIface := "{{default_iface}}"
+        ifaceName := defaultIface
+
+        if len(os.Args) > 1 {
+                ifaceName = os.Args[1]
         }
-        ifaceName := os.Args[1]
 
 	spec, err := ebpf.LoadCollectionSpecFromReader(bytes.NewReader(ebpfBytes))
         if err != nil {
