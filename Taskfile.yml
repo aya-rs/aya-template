@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  build-ebpf:
+    desc: "Build the eBPF program"
+    cmds:
+      - cargo run
+
+  install-ebpf:
+    desc: "Install the eBPF program"
+    cmds:
+      - go run main.go {{ "{{ .IFACE }}" }}
+    dir: {{project-name}}-go
+    deps:
+      - build-ebpf
+
+  default:
+    desc: "Build and install the eBPF program"
+    cmds:
+      - task: install-ebpf
