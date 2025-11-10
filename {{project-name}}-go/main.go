@@ -8,13 +8,19 @@ import (
         "os"
         "os/signal"
         "syscall"
+	"bytes"
 
         "github.com/cilium/ebpf"
         "github.com/cilium/ebpf/link"
         "github.com/cilium/ebpf/ringbuf"
+
+	_ "embed"
 )
 
 const progName = "{{crate_name}}"
+
+//go:embed .ebpf/{{project-name}}
+var ebpfBytes []byte
 
 func main() {
         if len(os.Args) < 2 {
@@ -23,7 +29,7 @@ func main() {
         }
         ifaceName := os.Args[1]
 
-        spec, err := ebpf.LoadCollectionSpec("/tmp/{{project-name}}")
+	spec, err := ebpf.LoadCollectionSpecFromReader(bytes.NewReader(ebpfBytes))
         if err != nil {
                 log.Fatalf("LoadCollectionSpec failed: %v", err)
         }

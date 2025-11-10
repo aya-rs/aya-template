@@ -15,7 +15,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     let src = concat!(env!("OUT_DIR"), "/{{project-name}}");
-    let dst = "/tmp/{{project-name}}";
+    let dst = "{{project-name}}-go/.ebpf/{{project-name}}";
 
     fs::copy(src, dst)?;
     Ok(())
