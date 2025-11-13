@@ -5,9 +5,16 @@ import (
 	"context"
 	"fmt"
 	"log"
+
+{% if program_type == "xdp" %}
 	"net"
+{% endif %}
+
 	"os"
 	"os/signal"
+{% if program_type == "tracepoint" %}
+	"strings"
+{% endif %}
 	"syscall"
 
 	"github.com/cilium/ebpf"
@@ -18,6 +25,14 @@ import (
 )
 
 const progName = "{{crate_name}}"
+
+{%- case program_type -%}
+{%- when "tracepoint" %}
+const defaultCategory = "{{tracepoint_category}}"
+const defaultName = "{{tracepoint_name}}"
+{%- when "xdp" %}
+const defaultIface = "{{default_iface}}"
+{%- endcase %}
 
 //go:embed .ebpf/{{project-name}}
 var ebpfBytes []byte
@@ -45,13 +60,6 @@ func extractPrintableStrings(raw []byte) []string {
 }
 
 func main() {
-	defaultIface := "{{default_iface}}"
-	ifaceName := defaultIface
-
-	if len(os.Args) > 1 {
-		ifaceName = os.Args[1]
-	}
-
 	spec, err := ebpf.LoadCollectionSpecFromReader(bytes.NewReader(ebpfBytes))
 	if err != nil {
 		log.Fatalf("LoadCollectionSpec failed: %v", err)
@@ -68,11 +76,35 @@ func main() {
 		log.Fatalf("Program %s not found", progName)
 	}
 
-	iface, err := net.InterfaceByName(ifaceName)
+    {%- case program_type -%}
+        {%- when "tracepoint" %}
+        category := defaultCategory
+        name := defaultName
+	attachment := fmt.Sprintf("%s:%s", category, name)
+
+        if len(os.Args) > 1 {
+            attachment = os.Args[1]
+            parts := strings.SplitN(attachment, ":", 2)
+            if len(parts) != 2 {
+                log.Fatalf("invalid attachment format: %s, expected category:name", attachment)
+            }
+            category, name = parts[0], parts[1]
+        }
+
+	tp, err := link.Tracepoint(category, name, prog, nil)
+	if err != nil {
+		log.Fatalf("opening tracepoint: %s", err)
+	}
+	defer tp.Close()
+        {%- when "xdp" %}
+	attachment := defaultIface
+	if len(os.Args) > 1 {
+		attachment = os.Args[1]
+	}
+	iface, err := net.InterfaceByName(attachment)
 	if err != nil {
 		log.Fatalf("Interface not found: %v", err)
 	}
-
 	l, err := link.AttachXDP(link.XDPOptions{
 		Program:   prog,
 		Interface: iface.Index,
@@ -81,7 +113,8 @@ func main() {
 		log.Fatalf("AttachXDP failed: %v", err)
 	}
 	defer l.Close()
-	fmt.Printf("✅ Program '%s' attached to %s\n", progName, ifaceName)
+    {%- endcase %}
+	fmt.Printf("✅ Program '%s' attached to %s\n", progName, attachment)
 
 	logMap, ok := coll.Maps["AYA_LOGS"]
 	if !ok {

@@ -9,12 +9,19 @@ tasks:
   install-ebpf:
     desc: "Install the eBPF program"
     cmds:
-      - go run main.go {{ "{{ .IFACE }}" }}
+      - go run main.go {{ "{{ .HOOK }}" }}
     dir: {{project-name}}-go
     deps:
       - build-ebpf
 
+  fmt:
+    desc: "format go code"
+    cmds:
+      - go fmt main.go
+    dir: {{project-name}}-go
+
   default:
     desc: "Build and install the eBPF program"
     cmds:
+      - task: fmt
       - task: install-ebpf
