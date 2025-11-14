@@ -65,7 +65,7 @@ struct Opt {
     cgroup_path: std::path::PathBuf,
 {%- when "uprobe", "uretprobe" %}
     #[clap(short, long)]
-    pid: Option<i32>,
+    pid: Option<u32>,
 {%- endcase %}
 }
 
