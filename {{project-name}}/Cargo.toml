@@ -22,7 +22,11 @@ tokio = { workspace = true, features = [
     "signal",
 ] }
 {% if program_types_with_opts contains program_type -%}
-clap = { workspace = true, default-features = true, features = ["derive"] }
+clap = { workspace = true, default-features = false, features = [
+    "derive",
+    "help",
+    "usage"
+] }
 {% endif -%}
 
 [build-dependencies]
