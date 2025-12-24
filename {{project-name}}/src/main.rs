@@ -132,7 +132,7 @@ async fn main() -> anyhow::Result<()> {
     let Opt { pid } = opt;
     let program: &mut UProbe = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach("{{uprobe_fn_name}}", "{{uprobe_target}}", pid, None /* cookie */)?;
+    program.attach("{{uprobe_fn_name}}", "{{uprobe_target}}", pid)?;
     {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     let Opt { cgroup_path } = opt;
     let cgroup =
