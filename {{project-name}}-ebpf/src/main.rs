@@ -69,7 +69,7 @@ fn try_{{crate_name}}(ctx: FExitContext) -> Result<u32, u32> {
 use aya_ebpf::{macros::uprobe, programs::ProbeContext};
 use aya_log_ebpf::info;
 
-#[uprobe]
+#[uprobe(path = "{{uprobe_target}}", function = "{{uprobe_fn_name}}")]
 pub fn {{crate_name}}(ctx: ProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,
@@ -85,7 +85,7 @@ fn try_{{crate_name}}(ctx: ProbeContext) -> Result<u32, u32> {
 use aya_ebpf::{macros::uretprobe, programs::RetProbeContext};
 use aya_log_ebpf::info;
 
-#[uretprobe]
+#[uretprobe(path = "{{uprobe_target}}", function = "{{uprobe_fn_name}}")]
 pub fn {{crate_name}}(ctx: RetProbeContext) -> u32 {
     match try_{{crate_name}}(ctx) {
         Ok(ret) => ret,

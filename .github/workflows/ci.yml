@@ -53,6 +53,13 @@ jobs:
             program: kprobe
           - runner: macos-15 # arm64
             program: kprobe
+          # Test that crate_name == program_type doesn't cause duplicate symbol errors.
+          - runner: ubuntu-latest
+            program: uprobe
+            crate_name: uprobe
+          - runner: ubuntu-latest
+            program: uretprobe
+            crate_name: uretprobe
 
     runs-on: ${{ matrix.runner }}
 
@@ -96,3 +103,5 @@ jobs:
         if: runner.os == 'Linux'
 
       - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
+        env:
+          CRATE_NAME: ${{ matrix.crate_name }}

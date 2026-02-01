@@ -12,7 +12,7 @@ if [ -z "${PROG_TYPE}" ]; then
   echo "program type required"
   exit 1
 fi
-CRATE_NAME=aya-test-crate
+CRATE_NAME=${CRATE_NAME:-aya-test-crate}
 
 case ${PROG_TYPE} in
 "cgroup_sockopt")
