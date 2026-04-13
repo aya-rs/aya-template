@@ -53,6 +53,13 @@ jobs:
             program: kprobe
           - runner: macos-15 # arm64
             program: kprobe
+          # Test that crate_name == program_type doesn't cause duplicate symbol errors (aya-rs/aya#1027)
+          - runner: ubuntu-latest
+            program: uprobe
+            crate_name: uprobe
+          - runner: ubuntu-latest
+            program: uretprobe
+            crate_name: uretprobe
 
     runs-on: ${{ matrix.runner }}
 
@@ -95,4 +102,4 @@ jobs:
       - run: sudo apt update && sudo apt install expect
         if: runner.os == 'Linux'
 
-      - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
+      - run: CRATE_NAME="${{ matrix.crate_name || 'aya-test-crate' }}" ./test.sh ${{ github.workspace }} ${{ matrix.program }}
