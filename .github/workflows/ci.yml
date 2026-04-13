@@ -105,3 +105,13 @@ jobs:
       - run: ./test.sh ${{ github.workspace }} ${{ matrix.program }}
         env:
           CRATE_NAME: ${{ matrix.crate_name }}
+
+  check:
+    if: always()
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
