@@ -8,7 +8,7 @@ use aya::{Btf, programs::FEntry};
 use anyhow::Context as _;
 use aya::{Btf, programs::FExit};
 {%- when "uprobe", "uretprobe" -%}
-use aya::programs::UProbe;
+use aya::programs::{UProbe, uprobe::UProbeScope};
 {%- when "sock_ops" -%}
 use anyhow::Context as _;
 use aya::programs::{SockOps, links::CgroupAttachMode};
@@ -130,9 +130,14 @@ async fn main() -> anyhow::Result<()> {
     program.attach()?;
     {%- when "uprobe", "uretprobe" %}
     let Opt { pid } = opt;
+    let scope = match pid.map(std::num::NonZeroU32::new) {
+        Some(Some(pid)) => UProbeScope::OneProcess(pid),
+        Some(None) => UProbeScope::CallingProcess,
+        None => UProbeScope::AllProcesses,
+    };
     let program: &mut UProbe = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach("{{uprobe_fn_name}}", "{{uprobe_target}}", pid)?;
+    program.attach("{{uprobe_fn_name}}", "{{uprobe_target}}", scope)?;
     {%- when "sock_ops", "cgroup_skb", "cgroup_sysctl", "cgroup_sockopt" %}
     let Opt { cgroup_path } = opt;
     let cgroup =
