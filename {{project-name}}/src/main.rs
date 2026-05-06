@@ -75,7 +75,9 @@ async fn main() -> anyhow::Result<()> {
 {%- if program_types_with_opts contains program_type %}
     let opt = Opt::parse();
 {% endif %}
-    env_logger::init();
+    env_logger::Builder::from_default_env()
+        .filter(None, log::LevelFilter::Debug)
+        .init();
 
     // Bump the memlock rlimit. This is needed for older kernels that don't use the
     // new memcg based accounting, see https://lwn.net/Articles/837122/
