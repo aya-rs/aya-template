@@ -89,10 +89,12 @@ jobs:
         with:
           tool: cargo-generate
 
-      - if: runner.os == 'macos'
+      - name: Install prerequisites
+        if: runner.os == 'macOS'
         run: |
           set -euxo pipefail
-          brew update && brew install filosottile/musl-cross/musl-cross llvm
+          # Dependencies are tracked in `Brewfile`.
+          brew bundle
           echo $(brew --prefix llvm)/bin >> $GITHUB_PATH
 
       - uses: taiki-e/install-action@v2

@@ -75,9 +75,9 @@ case $OS in
     ARCH="aarch64"
   fi
   TARGET=${ARCH}-unknown-linux-musl
-  CC=${ARCH}-linux-musl-gcc cargo build --package "${CRATE_NAME}" --release \
+  cargo build --package "${CRATE_NAME}" --release \
     --target="${TARGET}" \
-    --config=target."${TARGET}".linker=\""${ARCH}"-linux-musl-gcc\"
+    --config=target."${TARGET}".linker=\"rust-lld\"
   ;;
 "Linux")
   cargo +nightly fmt --all -- --check
