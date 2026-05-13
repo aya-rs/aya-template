@@ -17,7 +17,7 @@ use aya::{maps::SockHash, programs::SkMsg};
 use {{crate_name}}_common::SockKey;
 {%- when "xdp" -%}
 use anyhow::Context as _;
-use aya::programs::{Xdp, XdpFlags};
+use aya::programs::{Xdp, XdpMode};
 {%- when "classifier" -%}
 use aya::programs::{SchedClassifier, TcAttachType, tc};
 {%- when "cgroup_skb" -%}
@@ -174,8 +174,8 @@ async fn main() -> anyhow::Result<()> {
     let Opt { iface } = opt;
     let program: &mut Xdp = ebpf.program_mut("{{crate_name}}").unwrap().try_into()?;
     program.load()?;
-    program.attach(&iface, XdpFlags::default())
-        .context("failed to attach the XDP program with default flags - try changing XdpFlags::default() to XdpFlags::SKB_MODE")?;
+    program.attach(&iface, XdpMode::default())
+        .context("failed to attach the XDP program with default mode - try changing XdpMode::default() to XdpMode::Skb")?;
     {%- when "classifier" %}
     let Opt { iface } = opt;
     // error adding clsact to the interface if it is already added is harmless
