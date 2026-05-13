@@ -12,11 +12,20 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [workspace.dependencies]
+{% if rev_version != "" %}
+aya = { git = "https://github.com/aya-rs/aya", rev = "{{ rev_version }}", default-features = false }
+aya-build = { git = "https://github.com/aya-rs/aya", rev = "{{ rev_version }}", default-features = false }
+aya-ebpf = { git = "https://github.com/aya-rs/aya", rev = "{{ rev_version }}", default-features = false }
+aya-log = { git = "https://github.com/aya-rs/aya", rev = "{{ rev_version }}", default-features = false }
+aya-log-ebpf = { git = "https://github.com/aya-rs/aya", rev = "{{ rev_version }}", default-features = false }
+{% else %}
 aya = { git = "https://github.com/aya-rs/aya", default-features = false }
 aya-build = { git = "https://github.com/aya-rs/aya", default-features = false }
 aya-ebpf = { git = "https://github.com/aya-rs/aya", default-features = false }
 aya-log = { git = "https://github.com/aya-rs/aya", default-features = false }
 aya-log-ebpf = { git = "https://github.com/aya-rs/aya", default-features = false }
+{% endif %}
+
 
 anyhow = { version = "1", default-features = false }
 cargo_metadata = { version = "0.23.0", default-features = false }
