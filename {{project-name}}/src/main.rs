@@ -94,7 +94,7 @@ async fn main() -> anyhow::Result<()> {
     // reach for `Bpf::load_file` instead.
     let mut ebpf = aya::Ebpf::load(aya::include_bytes_aligned!(concat!(
         env!("OUT_DIR"),
-        "/{{project-name}}"
+        "/{{project-name}}_ebpf"
     )))?;
     match aya_log::EbpfLogger::init(&mut ebpf) {
         Err(e) => {
