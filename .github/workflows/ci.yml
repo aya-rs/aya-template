@@ -85,7 +85,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - uses: taiki-e/install-action@v2.85.13
+      - uses: taiki-e/install-action@v2.86.5
         with:
           tool: cargo-generate
 
@@ -97,7 +97,7 @@ jobs:
           brew bundle
           echo $(brew --prefix llvm)/bin >> $GITHUB_PATH
 
-      - uses: taiki-e/install-action@v2.85.13
+      - uses: taiki-e/install-action@v2.86.5
         with:
           tool: bpf-linker
 
