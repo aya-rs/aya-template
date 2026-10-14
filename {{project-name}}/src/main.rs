@@ -102,8 +102,14 @@ async fn main() -> anyhow::Result<()> {
             warn!("failed to initialize eBPF logger: {e}");
         }
         Ok(logger) => {
-            let mut logger =
-                tokio::io::unix::AsyncFd::with_interest(logger, tokio::io::Interest::READABLE)?;
+            // SAFETY: The logger owns its file descriptor, which stays open and unchanged
+            // while the AsyncFd owns it. We only flush the logger, never replace it.
+            let mut logger = unsafe {
+                tokio::io::unix::AsyncFd::register_with_interest(
+                    logger,
+                    tokio::io::Interest::READABLE,
+                )
+            }?;
             tokio::task::spawn(async move {
                 loop {
                     let mut guard = logger.readable_mut().await.unwrap();
