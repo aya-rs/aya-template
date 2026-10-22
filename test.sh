@@ -31,7 +31,7 @@ case ${PROG_TYPE} in
   ADDITIONAL_ARGS=(-d fn_name=try_to_wake_up)
   ;;
 "kprobe" | "kretprobe")
-  ADDITIONAL_ARGS=(-d kprobe=do_unlinkat)
+  ADDITIONAL_ARGS=(-d kprobe=vfs_unlink)
   ;;
 "lsm")
   ADDITIONAL_ARGS=(-d lsm_hook=file_open)
